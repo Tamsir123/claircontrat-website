@@ -4,9 +4,14 @@ import { useState } from "react"
 import Navigation from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"
 import { Send, Upload, FileText, MessageCircle, AlertCircle, Shield, Brain } from "lucide-react"
+import axios from "axios"
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")
+  const [contractText, setContractText] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [userPreference, setUserPreference] = useState("")
+  const [showRiskAlert, setShowRiskAlert] = useState(false)
   const [messages, setMessages] = useState([
     {
       type: "ai",
@@ -22,12 +27,112 @@ export default function ChatPage() {
     "Quelles données personnelles sont collectées ?",
     "Y a-t-il des frais cachés ou des pénalités ?",
     "Mes données sont-elles partagées avec des tiers ?",
-    "Quels sont mes droits en cas de litige ?",
+    "Résume ce contrat",
   ]
 
-  const handleSendMessage = () => {
-    if (!message.trim()) return
+  const userPreferences = [
+    "Je suis fan de Naruto et j'aime les références manga",
+    "Je préfère un langage simple et familier",
+    "J'aime les références pop culture et films",
+    "Utilise des métaphores sportives",
+    "Parle-moi comme à un entrepreneur tech",
+    "Je préfère un ton très professionnel",
+  ]
 
+  // Collage dans la zone de chat : résumé automatique
+  const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData.getData("text")
+    if (pastedText.length > 30) { // On suppose que c'est un contrat
+      setIsLoading(true)
+      setContractText(pastedText)
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "user",
+          content: pastedText,
+          timestamp: "À l'instant",
+        },
+      ])
+      try {
+        const response = await axios.post('http://localhost:4600/contract/summary', {
+          contractText: pastedText
+        })
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: response.data.summary,
+            timestamp: "À l'instant",
+          },
+        ])
+      } catch (error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: "Désolé, une erreur s'est produite lors de l'analyse du contrat.",
+            timestamp: "À l'instant",
+          },
+        ])
+      }
+      setIsLoading(false)
+      setMessage("")
+      e.preventDefault()
+    }
+  }
+
+  // Génération d'alerte de risque personnalisée
+  const handleGenerateRiskAlert = async () => {
+    if (!contractText || !userPreference) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: "Veuillez d'abord coller un contrat et sélectionner une préférence de communication.",
+          timestamp: "À l'instant",
+        },
+      ])
+      return
+    }
+
+    setIsLoading(true)
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "user",
+        content: `Génère une alerte de risque personnalisée avec la préférence : ${userPreference}`,
+        timestamp: "À l'instant",
+      },
+    ])
+
+    try {
+      const response = await axios.post('http://localhost:4600/contract/risk-alert', {
+        contractText,
+        userPreference
+      })
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: response.data.alert,
+          timestamp: "À l'instant",
+        },
+      ])
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: "Désolé, une erreur s'est produite lors de la génération de l'alerte personnalisée.",
+          timestamp: "À l'instant",
+        },
+      ])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  const handleSendMessage = async () => {
+    if (!message.trim()) return
     setMessages((prev) => [
       ...prev,
       {
@@ -36,21 +141,50 @@ export default function ChatPage() {
         timestamp: "À l'instant",
       },
     ])
-
-    // Simulation de réponse IA
-    setTimeout(() => {
+    const currentMessage = message
+    setMessage("")
+    setIsLoading(true)
+    try {
+      if (contractText) {
+        // Si un contrat est chargé, question sur le contrat
+        const response = await axios.post('http://localhost:4600/contract/ask', {
+          contractText,
+          question: currentMessage
+        })
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: response.data.answer,
+            timestamp: "À l'instant",
+          },
+        ])
+      } else {
+        // Sinon, comportement par défaut (summary)
+        const response = await axios.post('http://localhost:4600/contract/summary', {
+          contractText: currentMessage
+        })
+        setMessages((prev) => [
+          ...prev,
+          {
+            type: "ai",
+            content: response.data.summary,
+            timestamp: "À l'instant",
+          },
+        ])
+      }
+    } catch (error) {
       setMessages((prev) => [
         ...prev,
         {
           type: "ai",
-          content:
-            "J'analyse votre question... Basé sur le contrat que vous avez partagé, voici mon analyse détaillée avec les points de vigilance et mes recommandations personnalisées.",
+          content: "Désolé, une erreur s'est produite. Veuillez réessayer.",
           timestamp: "À l'instant",
         },
       ])
-    }, 1000)
-
-    setMessage("")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -113,6 +247,40 @@ export default function ChatPage() {
                         {question}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* Alerte de risque personnalisée */}
+                <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-2xl p-6 border border-red-100 dark:border-red-800/20">
+                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                    Alerte personnalisée
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm text-slate-600 dark:text-slate-300 mb-2 block">
+                        Style de communication :
+                      </label>
+                      <select
+                        value={userPreference}
+                        onChange={(e) => setUserPreference(e.target.value)}
+                        className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-700 dark:text-slate-300"
+                      >
+                        <option value="">Choisir un style...</option>
+                        {userPreferences.map((pref, index) => (
+                          <option key={index} value={pref}>
+                            {pref}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      onClick={handleGenerateRiskAlert}
+                      disabled={!contractText || !userPreference || isLoading}
+                      className="w-full bg-red-600 text-white rounded-lg py-2 px-4 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? "Génération..." : "🚨 Générer l'alerte"}
+                    </button>
                   </div>
                 </div>
 
@@ -187,7 +355,7 @@ export default function ChatPage() {
                               : "bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
                           } rounded-2xl p-4`}
                         >
-                          <p className="text-sm leading-relaxed">{msg.content}</p>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                           <p
                             className={`text-xs mt-2 ${msg.type === "user" ? "text-cyan-100" : "text-slate-500 dark:text-slate-400"}`}
                           >
@@ -197,53 +365,17 @@ export default function ChatPage() {
                       </div>
                     ))}
 
-                    {/* Exemple d'analyse IA */}
-                    <div className="bg-gradient-to-br from-emerald-50 to-cyan-50 dark:from-emerald-900/20 dark:to-cyan-900/20 rounded-2xl p-6 border border-emerald-200 dark:border-emerald-800/20">
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-5 h-5 text-emerald-600" />
-                          <h4 className="font-semibold text-slate-800 dark:text-white">Analyse du contrat Instagram</h4>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
-                            <h5 className="font-medium text-slate-800 dark:text-white mb-2">Score de lisibilité</h5>
-                            <div className="flex items-center gap-2">
-                              <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
-                                <div className="bg-amber-500 h-2 rounded-full w-3/5"></div>
-                              </div>
-                              <span className="text-sm font-medium text-amber-600">6/10</span>
-                            </div>
+                    {/* Indicateur de chargement */}
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-cyan-500 border-t-transparent"></div>
+                            <span className="text-sm">L'IA analyse votre message...</span>
                           </div>
-
-                          <div className="bg-white dark:bg-slate-800 rounded-xl p-4">
-                            <h5 className="font-medium text-slate-800 dark:text-white mb-2">Niveau de risque</h5>
-                            <div className="flex items-center gap-2">
-                              <AlertCircle className="w-4 h-4 text-amber-500" />
-                              <span className="text-sm font-medium text-amber-600">Modéré</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <h5 className="font-medium text-slate-800 dark:text-white">Conseils personnalisés :</h5>
-                          <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
-                            <li className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-                              Vérifiez vos paramètres de confidentialité dans l'application
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-                              Limitez le partage de données avec des applications tierces
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full mt-2 flex-shrink-0"></div>
-                              Vous pouvez supprimer votre compte à tout moment sans pénalité
-                            </li>
-                          </ul>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Zone de saisie */}
@@ -253,15 +385,27 @@ export default function ChatPage() {
                         type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                        placeholder="Posez votre question sur le contrat..."
-                        className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
+                        onPaste={handlePaste}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter" && !isLoading) {
+                            e.preventDefault()
+                            handleSendMessage()
+                          }
+                        }}
+                        disabled={isLoading}
+                        placeholder="Collez un contrat ou posez une question..."
+                        className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 disabled:opacity-50"
                       />
                       <button
                         onClick={handleSendMessage}
-                        className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 hover:-translate-y-0.5"
+                        disabled={!message.trim() || isLoading}
+                        className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Send className="w-5 h-5" />
+                        {isLoading ? (
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                        ) : (
+                          <Send className="w-5 h-5" />
+                        )}
                       </button>
                     </div>
                   </div>

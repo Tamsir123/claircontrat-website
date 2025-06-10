@@ -18,6 +18,7 @@ export default function Navigation() {
     { name: "Accueil", link: "/" },
     { name: "Résumés populaires", link: "/resumes-populaires" },
     { name: "Chat IA", link: "/chat" },
+    { name: "Test Alerte", link: "/test-risk-alert" },
     { name: "Historique", link: "/historique" },
     { name: "Profil", link: "/profil" },
   ]
