@@ -89,7 +89,7 @@ export default function ChatPage() {
     
     // 🚫 ENSUITE : Exclure les demandes d'explication/clarification (vont vers CHAT)
     const explanationKeywords = [
-      'explique', 'explique-moi', 'clarrifie', 'clarifie', 'que signifie', 'qu\'est-ce que', 'c\'est quoi',
+      'explique', 'explique en details', 'explique-moi', 'clarrifie', 'clarifie', 'que signifie', 'qu\'est-ce que', 'c\'est quoi',
       'que veut dire', 'ça veut dire quoi', 'comment comprendre', 'peux-tu expliquer',
       'détaille', 'détaille-moi', 'précise', 'éclaircis', 'éclairci', 'pourquoi'
     ]
@@ -157,7 +157,10 @@ export default function ChatPage() {
       return 'risk_alert'
     }
 
-    // 3. 💡 CONTRACT_QUESTION : Questions spécifiques sur le contrat existant
+    // Questions directes sur un contrat existant - REDIRECTION VERS CHAT
+    // Utilisation de 'general_chat' pour toutes les questions sur le contrat existant
+    // 🚫 Commenté: Ne plus utiliser le type 'contract_question'
+    /*
     const contractQuestionKeywords = [
       'explique', 'explique-moi', 'que signifie', 'qu\'est-ce que', 'c\'est quoi',
       'cette clause', 'ce point', 'cette partie', 'ce passage', 'cette section',
@@ -171,12 +174,12 @@ export default function ChatPage() {
       lowerMessage.includes(keyword)
     )
     
-    // Questions directes sur un contrat existant
     if (contractText && hasQuestionKeywords) {
       return 'contract_question'
     }
+    */
 
-    // 4. 🤖 GENERAL_CHAT : Tout le reste (conversations, aide générale)
+    // 4. 🤖 GENERAL_CHAT : Tout le reste (conversations, aide générale, questions sur contrat)
     return 'general_chat'
   }
 
@@ -235,23 +238,29 @@ export default function ChatPage() {
           break
 
         case 'contract_question':
-          // 💡 CONTRACT_QUESTION: Question spécifique sur le contrat via l'endpoint CONTRACT/ASK
-          console.log('💡 Question sur le contrat → Utilisation de CONTRACT/ASK')
-          if (!contractText) {
-            aiResponse = "📄 Pour répondre à vos questions, j'ai besoin d'abord d'analyser un contrat. Pouvez-vous le coller dans le chat ?"
-          } else {
-            response = await axios.post('http://localhost:4600/contract/ask', {
-              contractText,
-              question: currentMessage
-            })
-            aiResponse = response.data.answer
-          }
+          // 🚫 Ce cas ne devrait plus jamais être atteint - gardé pour compatibilité
+          console.log('💡 Question sur le contrat → Redirection vers CHAT (compatibilité)')
+          const chatHistoryForQuestion = messages.map(msg => ({
+            type: msg.type,
+            content: msg.content
+          }))
+          
+          response = await axios.post('http://localhost:4600/ai/chat', {
+            message: currentMessage,
+            conversationHistory: chatHistoryForQuestion,
+            contractContext: contractText || null,
+            userProfile: userPreference || null,
+            // Indiquer que c'est une question sur contrat pour le prompt
+            messageType: 'contract_question'
+          })
+          
+          aiResponse = response.data.response
           break
 
         case 'general_chat':
         default:
-          // 🤖 CHAT: Conversations générales, questions, clarifications
-          console.log('🤖 Conversation générale → Utilisation du CHAT')
+          // 🤖 CHAT: Conversations générales, questions, clarifications, questions sur contrat
+          console.log('🤖 Conversation générale/Question sur contrat → Utilisation du CHAT')
           const conversationHistory = messages.map(msg => ({
             type: msg.type,
             content: msg.content
