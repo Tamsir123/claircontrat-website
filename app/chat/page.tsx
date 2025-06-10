@@ -5,6 +5,7 @@ import Navigation from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"
 import { Send, Upload, FileText, MessageCircle, AlertCircle, Brain, Trash2, Copy, Download } from "lucide-react"
 import axios from "axios"
+import { MessageFormatter } from "@/lib/message-formatter"
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")
@@ -661,7 +662,16 @@ export default function ChatPage() {
                             </div>
                           )}
                           
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                          {msg.type === "ai" ? (
+                            <div 
+                              className="text-sm leading-relaxed"
+                              dangerouslySetInnerHTML={{ 
+                                __html: MessageFormatter.formatByType(msg.content, msg.analysisType) 
+                              }}
+                            />
+                          ) : (
+                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                          )}
                           <p
                             className={`text-xs mt-2 ${msg.type === "user" ? "text-cyan-100" : "text-slate-500 dark:text-slate-400"}`}
                           >

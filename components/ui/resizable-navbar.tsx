@@ -78,8 +78,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: visible ? "40%" : "100%",
-        y: visible ? 20 : 0,
+        width: visible ? "95%" : "100%",
+        y: visible ? 12 : 0,
       }}
       transition={{
         type: "spring",
@@ -87,10 +87,11 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         damping: 50,
       }}
       style={{
-        minWidth: "800px",
+        minWidth: "1000px",
+        maxWidth: "1800px",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-6 py-3 lg:flex",
+        "relative z-[60] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex lg:px-6 lg:py-3 xl:px-8 xl:py-4",
         visible && "bg-white/80 dark:bg-navy-900/80 border border-brand-200/20 dark:border-brand-800/20",
         className,
       )}
@@ -107,7 +108,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium transition duration-200 lg:flex lg:space-x-2",
+        "absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium transition duration-200 lg:flex lg:space-x-3 xl:space-x-4 2xl:space-x-6",
         className,
       )}
     >
@@ -115,7 +116,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors"
+          className="relative px-2 py-1.5 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors lg:px-3 lg:py-2 xl:px-4 xl:py-2 whitespace-nowrap"
           key={`link-${idx}`}
           href={item.link}
         >
@@ -125,7 +126,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
               className="absolute inset-0 h-full w-full rounded-full bg-brand-50 dark:bg-brand-900/20"
             />
           )}
-          <span className="relative z-20 font-medium">{item.name}</span>
+          <span className="relative z-20 font-medium text-sm lg:text-sm xl:text-base">{item.name}</span>
         </a>
       ))}
     </motion.div>
@@ -140,11 +141,11 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
-        width: visible ? "90%" : "100%",
-        paddingRight: visible ? "12px" : "0px",
-        paddingLeft: visible ? "12px" : "0px",
-        borderRadius: visible ? "4px" : "2rem",
-        y: visible ? 20 : 0,
+        width: visible ? "95%" : "100%",
+        paddingRight: visible ? "8px" : "0px",
+        paddingLeft: visible ? "8px" : "0px",
+        borderRadius: visible ? "8px" : "2rem",
+        y: visible ? 12 : 0,
       }}
       transition={{
         type: "spring",
@@ -152,7 +153,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 50,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
         visible && "bg-white/80 dark:bg-navy-900/80 border border-brand-200/20 dark:border-brand-800/20",
         className,
       )}
@@ -163,7 +164,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
 }
 
 export const MobileNavHeader = ({ children, className }: MobileNavHeaderProps) => {
-  return <div className={cn("flex w-full flex-row items-center justify-between px-4", className)}>{children}</div>
+  return <div className={cn("flex w-full flex-row items-center justify-between px-3", className)}>{children}</div>
 }
 
 export const MobileNavMenu = ({ children, className, isOpen, onClose }: MobileNavMenuProps) => {
@@ -175,7 +176,7 @@ export const MobileNavMenu = ({ children, className, isOpen, onClose }: MobileNa
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white/95 backdrop-blur-md px-4 py-8 shadow-xl border border-brand-200/20 dark:bg-navy-900/95 dark:border-brand-800/20",
+            "absolute inset-x-0 top-14 z-50 flex w-full flex-col items-start justify-start gap-3 rounded-lg bg-white/95 backdrop-blur-md px-3 py-6 shadow-xl border border-brand-200/20 dark:bg-navy-900/95 dark:border-brand-800/20",
             className,
           )}
         >
@@ -194,17 +195,17 @@ export const MobileNavToggle = ({
   onClick: () => void
 }) => {
   return isOpen ? (
-    <IconX className="text-slate-700 dark:text-white h-6 w-6" onClick={onClick} />
+    <IconX className="text-slate-700 dark:text-white h-5 w-5" onClick={onClick} />
   ) : (
-    <IconMenu2 className="text-slate-700 dark:text-white h-6 w-6" onClick={onClick} />
+    <IconMenu2 className="text-slate-700 dark:text-white h-5 w-5" onClick={onClick} />
   )
 }
 
 export const NavbarLogo = () => {
   return (
-    <a href="/" className="relative z-20 mr-4 flex items-center space-x-3 px-2 py-1 text-sm font-normal">
-      <img src="/logo.jpeg" alt="ClairContrat" width={40} height={40} className="rounded-lg" />
-      <span className="font-bold text-xl text-slate-800 dark:text-white">ClairContrat</span>
+    <a href="/" className="relative z-20 mr-3 flex items-center space-x-2 px-1 py-1 text-sm font-normal lg:mr-4 lg:space-x-3 lg:px-2 xl:mr-6 xl:space-x-3">
+      <img src="/logo.jpeg" alt="Content Radar" width={28} height={28} className="rounded-full lg:w-10 lg:h-10 xl:w-12 xl:h-12" />
+      <span className="font-bold text-lg text-slate-800 dark:text-white lg:text-xl xl:text-2xl">Content Radar</span>
     </a>
   )
 }
@@ -224,7 +225,7 @@ export const NavbarButton = ({
   variant?: "primary" | "secondary" | "dark" | "gradient"
 } & (React.ComponentPropsWithoutRef<"a"> | React.ComponentPropsWithoutRef<"button">)) => {
   const baseStyles =
-    "px-6 py-2.5 rounded-full font-semibold text-sm relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center"
+    "px-4 py-2 rounded-full font-semibold text-xs relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center lg:px-5 lg:py-2.5 lg:text-sm xl:px-6 xl:py-3 xl:text-base whitespace-nowrap"
 
   const variantStyles = {
     primary:

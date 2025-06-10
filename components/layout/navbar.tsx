@@ -10,7 +10,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { IconUser } from "@tabler/icons-react"
 import { useState } from "react"
 
 export default function Navigation() {
@@ -18,7 +18,6 @@ export default function Navigation() {
     { name: "Accueil", link: "/" },
     { name: "Résumés populaires", link: "/resumes-populaires" },
     { name: "Chat IA", link: "/chat" },
-    { name: "Test Alerte", link: "/test-risk-alert" },
     { name: "Historique", link: "/historique" },
     { name: "Profil", link: "/profil" },
   ]
@@ -31,12 +30,13 @@ export default function Navigation() {
         <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            
-            <NavbarButton variant="secondary" href="/inscription">
-              Connexion
-            </NavbarButton>
+          <div className="flex items-center gap-3 xl:gap-4">
+            <a 
+              href="/inscription" 
+              className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-colors"
+            >
+              <IconUser className="w-4 h-4 lg:w-5 lg:h-5 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
+            </a>
             <NavbarButton variant="primary" href="/chat">
               Analyser un contrat
             </NavbarButton>
@@ -55,16 +55,20 @@ export default function Navigation() {
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 font-medium"
+                className="relative text-slate-600 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 font-medium text-sm py-1"
               >
                 <span className="block">{item.name}</span>
               </a>
             ))}
-            <div className="flex w-full flex-col gap-4 mt-4">
-              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="secondary" className="w-full">
-                Connexion
-              </NavbarButton>
-              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
+            <div className="flex w-full flex-row items-center justify-between gap-3 mt-3">
+              <a 
+                href="/inscription" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-colors"
+              >
+                <IconUser className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+              </a>
+              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="flex-1 text-sm py-2">
                 Analyser un contrat
               </NavbarButton>
             </div>
