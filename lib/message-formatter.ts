@@ -1,107 +1,110 @@
-// Utilitaire pour formater les messages avec couleurs et mise en forme
-export interface FormattedMessage {
-  content: string;
-  type: 'user' | 'ai';
-  hasFormatting: boolean;
-}
+/**
+ * MessageFormatter - Utilitaire pour formater les messages du chat
+ * Convertit le texte brut en HTML formaté selon le type d'analyse
+ */
+
+import { marked } from 'marked';
 
 export class MessageFormatter {
   /**
-   * Formate un message AI avec markdown et couleurs
+   * Formate le contenu des messages selon leur type d'analyse
    */
-  static formatAIMessage(content: string): string {
-    if (!content) return content;
-
-    let formatted = content;
-
-    // 1. Gestion des titres avec emojis (niveaux H1, H2, H3)
-    formatted = formatted.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">$1</h1>');
-    formatted = formatted.replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-3 mt-6 flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">$1</h2>');
-    formatted = formatted.replace(/^### (.*$)/gim, '<h3 class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2 mt-4">$1</h3>');
-
-    // 2. Séparateurs visuels
-    formatted = formatted.replace(/^---$/gm, '<hr class="my-6 border-slate-200 dark:border-slate-700">');
-
-    // 3. Texte en gras avec couleurs contextuelles
-    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white bg-yellow-100 dark:bg-yellow-900/30 px-1 rounded">$1</strong>');
-
-    // 4. Gestion des sections importantes avec couleurs
-    formatted = formatted.replace(/🔍 \*\*(.*?)\*\*/g, '<div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 my-4 rounded-r-lg"><h4 class="text-lg font-bold text-blue-800 dark:text-blue-200 flex items-center gap-2">🔍 $1</h4></div>');
-    formatted = formatted.replace(/🔎 \*\*(.*?)\*\*/g, '<div class="bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 p-4 my-4 rounded-r-lg"><h4 class="text-lg font-bold text-orange-800 dark:text-orange-200 flex items-center gap-2">🔎 $1</h4></div>');
-
-    // 5. Listes à puces avec icônes colorées
-    formatted = formatted.replace(/^- (🚨.*$)/gm, '<div class="flex items-start gap-3 my-3 p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-800"><span class="text-red-500 font-bold mt-1">•</span><span class="flex-1 text-red-800 dark:text-red-200">$1</span></div>');
-    formatted = formatted.replace(/^- (⚠️.*$)/gm, '<div class="flex items-start gap-3 my-3 p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800"><span class="text-amber-500 font-bold mt-1">•</span><span class="flex-1 text-amber-800 dark:text-amber-200">$1</span></div>');
-    formatted = formatted.replace(/^- (🔒.*$)/gm, '<div class="flex items-start gap-3 my-3 p-3 bg-purple-50 dark:bg-purple-900/10 rounded-lg border border-purple-200 dark:border-purple-800"><span class="text-purple-500 font-bold mt-1">•</span><span class="flex-1 text-purple-800 dark:text-purple-200">$1</span></div>');
-    formatted = formatted.replace(/^- (📡.*$)/gm, '<div class="flex items-start gap-3 my-3 p-3 bg-indigo-50 dark:bg-indigo-900/10 rounded-lg border border-indigo-200 dark:border-indigo-800"><span class="text-indigo-500 font-bold mt-1">•</span><span class="flex-1 text-indigo-800 dark:text-indigo-200">$1</span></div>');
-    formatted = formatted.replace(/^- (💸.*$)/gm, '<div class="flex items-start gap-3 my-3 p-3 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-800"><span class="text-green-500 font-bold mt-1">•</span><span class="flex-1 text-green-800 dark:text-green-200">$1</span></div>');
-
-    // 6. Listes à puces génériques
-    formatted = formatted.replace(/^- (.*$)/gm, '<div class="flex items-start gap-3 my-2"><span class="text-cyan-500 font-bold mt-1 text-sm">•</span><span class="flex-1">$1</span></div>');
-
-    // 7. Scores de risque avec badge coloré
-    formatted = formatted.replace(/(\d+%.*(?:risque|danger|critique).*)/gi, '<div class="inline-block bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-full px-4 py-2 my-2"><span class="text-red-700 dark:text-red-300 font-bold text-lg">$1</span></div>');
-
-    // 8. Conseils et actions avec couleur verte
-    formatted = formatted.replace(/(✅.*$)/gm, '<div class="flex items-start gap-2 my-2 p-2 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg"><span class="text-emerald-600 mt-1">✅</span><span class="text-emerald-800 dark:text-emerald-200">$1</span></div>');
-    formatted = formatted.replace(/(❌.*$)/gm, '<div class="flex items-start gap-2 my-2 p-2 bg-red-50 dark:bg-red-900/10 rounded-lg"><span class="text-red-600 mt-1">❌</span><span class="text-red-800 dark:text-red-200">$1</span></div>');
-
-    // 9. Gestion des majuscules importantes (mots en CAPS)
-    formatted = formatted.replace(/\b([A-Z]{3,})\b/g, '<span class="bg-red-200 dark:bg-red-800 text-red-900 dark:text-red-100 px-1 rounded font-bold text-sm">$1</span>');
-
-    // 10. Nettoyage et espacement
-    formatted = formatted.replace(/\n\n/g, '<div class="my-4"></div>');
-    formatted = formatted.replace(/\n/g, '<br>');
-
-    return formatted;
-  }
-
-  /**
-   * Détermine si un message nécessite un formatage spécial
-   */
-  static needsFormatting(content: string): boolean {
-    const formattingPatterns = [
-      /\*\*.*?\*\*/,  // Texte en gras
-      /^#{1,3} /m,    // Titres markdown
-      /^- /m,         // Listes
-      /🔍|🔎|🚨|⚠️|🔒|📡|💸/, // Emojis de structure
-      /---/,          // Séparateurs
-      /\d+%/          // Pourcentages
-    ];
-
-    return formattingPatterns.some(pattern => pattern.test(content));
-  }
-
-  /**
-   * Formate selon le type de message (summary, risk-alert, chat)
-   */
-  static formatByType(content: string, messageType?: string): string {
-    if (!this.needsFormatting(content)) {
-      return content.replace(/\n/g, '<br>');
-    }
-
-    let formatted = this.formatAIMessage(content);
-
-    // Adaptations spécifiques par type
-    switch (messageType) {
+  static formatByType(content: string, analysisType?: string): string {
+    // Convertir le markdown en HTML
+    let formattedContent = this.markdownToHtml(content);
+    
+    // Appliquer un formatage spécifique selon le type d'analyse
+    switch (analysisType) {
       case 'contract_analysis':
-        // Ajouter un cadre spécial pour les résumés
-        formatted = `<div class="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-r-lg">${formatted}</div>`;
+        formattedContent = this.highlightContractAnalysis(formattedContent);
         break;
-      
       case 'risk_alert':
-        // Ajouter un cadre d'alerte
-        formatted = `<div class="border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 p-4 rounded-r-lg">${formatted}</div>`;
+        formattedContent = this.highlightRiskAlert(formattedContent);
         break;
-      
       case 'contract_question':
-        // Ajouter un cadre informatif
-        formatted = `<div class="border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-r-lg">${formatted}</div>`;
+        formattedContent = this.highlightContractQuestion(formattedContent);
+        break;
+      default:
+        // Formatage général pour les conversations
         break;
     }
 
-    return formatted;
+    return formattedContent;
+  }
+
+  /**
+   * Convertit le texte Markdown en HTML
+   */
+  private static markdownToHtml(text: string): string {
+    try {
+      return marked.parse(text) as string;
+    } catch (error) {
+      console.error("Erreur de conversion Markdown:", error);
+      return text;
+    }
+  }
+
+  /**
+   * Ajoute des styles spécifiques pour les analyses de contrat
+   */
+  private static highlightContractAnalysis(html: string): string {
+    // Mettre en évidence les sections et les titres
+    html = html.replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-cyan-600 dark:text-cyan-400 text-lg font-bold my-3">$1</h2>');
+    html = html.replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-cyan-500 dark:text-cyan-300 text-base font-semibold my-2">$1</h3>');
+    
+    // Mettre en évidence les listes
+    html = html.replace(/<ul>/g, '<ul class="list-disc pl-5 my-2 space-y-1">');
+    html = html.replace(/<li>/g, '<li class="text-slate-700 dark:text-slate-300">');
+    
+    // Ajouter des styles pour les paragraphes
+    html = html.replace(/<p>/g, '<p class="my-2">');
+    
+    return html;
+  }
+
+  /**
+   * Ajoute des styles spécifiques pour les alertes de risque
+   */
+  private static highlightRiskAlert(html: string): string {
+    // Mettre en évidence les alertes et les risques
+    html = html.replace(/<h2>(.*?)risque(.*?)<\/h2>/gi, '<h2 class="text-red-600 dark:text-red-400 text-lg font-bold my-3">$1risque$2</h2>');
+    html = html.replace(/<h3>(.*?)risque(.*?)<\/h3>/gi, '<h3 class="text-red-500 dark:text-red-300 text-base font-semibold my-2">$1risque$2</h3>');
+    html = html.replace(/<h2>(.*?)alerte(.*?)<\/h2>/gi, '<h2 class="text-amber-600 dark:text-amber-400 text-lg font-bold my-3">$1alerte$2</h2>');
+    html = html.replace(/<h3>(.*?)alerte(.*?)<\/h3>/gi, '<h3 class="text-amber-500 dark:text-amber-300 text-base font-semibold my-2">$1alerte$2</h3>');
+    
+    // Mettre en évidence les listes
+    html = html.replace(/<ul>/g, '<ul class="list-disc pl-5 my-2 space-y-1">');
+    html = html.replace(/<li>/g, '<li class="text-slate-700 dark:text-slate-300">');
+    
+    // Mettre en évidence les termes relatifs aux risques
+    html = html.replace(/\b(attention|dangereux|risqué|préoccupant|problématique|vigilance)\b/gi, 
+      '<span class="text-red-600 dark:text-red-400 font-medium">$1</span>');
+    
+    // Ajouter des styles pour les paragraphes
+    html = html.replace(/<p>/g, '<p class="my-2">');
+    
+    return html;
+  }
+
+  /**
+   * Ajoute des styles spécifiques pour les questions sur le contrat
+   */
+  private static highlightContractQuestion(html: string): string {
+    // Mettre en évidence les réponses aux questions
+    html = html.replace(/<h2>(.*?)<\/h2>/g, '<h2 class="text-blue-600 dark:text-blue-400 text-lg font-bold my-3">$1</h2>');
+    html = html.replace(/<h3>(.*?)<\/h3>/g, '<h3 class="text-blue-500 dark:text-blue-300 text-base font-semibold my-2">$1</h3>');
+    
+    // Mettre en évidence les listes
+    html = html.replace(/<ul>/g, '<ul class="list-disc pl-5 my-2 space-y-1">');
+    html = html.replace(/<li>/g, '<li class="text-slate-700 dark:text-slate-300">');
+    
+    // Ajouter des styles pour les paragraphes
+    html = html.replace(/<p>/g, '<p class="my-2">');
+    
+    // Mettre en évidence les termes juridiques
+    html = html.replace(/\b(clause|article|section|paragraphe|contrat|condition|résiliation|remboursement)\b/gi, 
+      '<span class="text-purple-600 dark:text-purple-400 font-medium">$1</span>');
+    
+    return html;
   }
 }
-
-export default MessageFormatter;

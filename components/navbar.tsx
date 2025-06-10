@@ -10,6 +10,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar"
+import { IconUser } from "@tabler/icons-react"
 import { useState } from "react"
 
 export default function Navigation() {
@@ -44,9 +45,15 @@ export default function Navigation() {
         <NavBody>
           <NavbarLogo />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Connexion</NavbarButton>
-            <NavbarButton variant="primary">Analyser un contrat</NavbarButton>
+          <div className="flex items-center gap-3 lg:gap-4 xl:gap-5">
+            <a 
+              href="/inscription" 
+              className="flex items-center justify-center w-9 h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200 hover:scale-105"
+              title="Connexion / Inscription"
+            >
+              <IconUser className="w-4 h-4 lg:w-5 lg:h-5 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
+            </a>
+            <NavbarButton variant="primary" className="px-4 py-2 lg:px-5 lg:py-2.5 xl:px-6 xl:py-3">Analyser un contrat</NavbarButton>
           </div>
         </NavBody>
 
@@ -67,11 +74,16 @@ export default function Navigation() {
                 <span className="block">{item.name}</span>
               </a>
             ))}
-            <div className="flex w-full flex-col gap-4 mt-4">
-              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="secondary" className="w-full">
-                Connexion
-              </NavbarButton>
-              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
+            <div className="flex w-full flex-row items-center justify-between gap-3 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+              <a 
+                href="/inscription" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center w-11 h-11 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200"
+                title="Connexion / Inscription"
+              >
+                <IconUser className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+              </a>
+              <NavbarButton onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="flex-1 text-sm py-3">
                 Analyser un contrat
               </NavbarButton>
             </div>
