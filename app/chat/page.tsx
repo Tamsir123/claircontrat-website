@@ -21,9 +21,9 @@ export default function ChatPage() {
   }>>([
     {
       type: "ai",
-      content: "👋 Salut ! Je suis ClairContrat AI, votre assistant intelligent pour l'analyse de contrats.\n\n🧠 **Je détecte automatiquement vos besoins et utilise le bon service :**\n\n📋 **Résumé de contrat** → Endpoint SUMMARY (dites \"résume\" ou collez un contrat)\n🚨 **Analyse personnalisée** → Endpoint RISK-ALERT (sélectionnez votre profil + demandez)\n🤖 **Questions & Chat** → Endpoint CHAT (toutes les autres interactions)\n\n✨ **Exemples :**\n• \"Résume-moi ce contrat\" → SUMMARY\n• \"Analyse personnalisée selon mon profil\" → RISK-ALERT\n• \"Comment ça marche ?\" → CHAT\n\n🎯 *Je choisis automatiquement le bon endpoint selon vos mots-clés !*",
+      content: "👋 Salut ! Je suis Consent Radar AI, votre assistant intelligent pour l'analyse de contrats. Comment puis-je vous aider ?",
       timestamp: new Date().toLocaleTimeString(),
-      indicator: "🤖 SYSTÈME INTELLIGENT"
+      indicator: "🤖 ASSISTANT IA"
     },
   ])
   
@@ -647,7 +647,7 @@ export default function ChatPage() {
                         <Brain className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-semibold">Assistant IA ClairContrat</h3>
+                        <h3 className="font-semibold">Assistant IA Consent Radar</h3>
                         <p className="text-sm text-cyan-100">En ligne • Spécialisé en contrats numériques</p>
                       </div>
                     </div>

@@ -205,7 +205,7 @@ export const NavbarLogo = () => {
   return (
     <a href="/" className="relative z-20 mr-3 flex items-center space-x-2 px-1 py-1 text-sm font-normal lg:mr-4 lg:space-x-3 lg:px-2 xl:mr-6 xl:space-x-3">
       <img src="/logo.jpeg" alt="Content Radar" width={28} height={28} className="rounded-full lg:w-10 lg:h-10 xl:w-12 xl:h-12" />
-      <span className="font-bold text-lg text-slate-800 dark:text-white lg:text-xl xl:text-2xl">Content Radar</span>
+      <span className="font-bold text-lg text-slate-800 dark:text-white lg:text-xl xl:text-2xl">Consent Radar</span>
     </a>
   )
 }
