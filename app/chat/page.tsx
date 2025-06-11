@@ -11,6 +11,7 @@ import "./sidebar-scrollbar.css"
 import "./message-renderer.css"
 import "./ai-message-styles.css"
 import "./simple-message-styles.css"
+import "./message-indicators.css"
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")
@@ -211,7 +212,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
   }
 
   // Fonction pour coller un contrat
-  const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const pastedText = e.clipboardData.getData("text")
     if (pastedText.length > 100) {
       setContractText(pastedText)
@@ -469,6 +470,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         type: "ai",
         content: "👋 Conversation effacée ! Comment puis-je vous aider ?",
         timestamp: new Date().toLocaleTimeString(),
+        indicator: "🤖 ASSISTANT IA"
       },
     ])
     setContractText("")
@@ -1208,11 +1210,33 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                               {/* Indicateur de type d'analyse modernisé */}
                               {msg.type === "ai" && msg.indicator && (
                                 <motion.div 
-                                  className="absolute -top-3 -left-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-lg border-2 border-white dark:border-slate-800"
+                                  className={`message-indicator ${
+                                    msg.indicator.includes('CONVERSATION') ? 'conversation' :
+                                    msg.indicator.includes('ASSISTANT') ? 'assistant' :
+                                    msg.indicator.includes('RÉSUMÉ') || msg.indicator.includes('ANALYSE') ? 'analysis' :
+                                    msg.indicator.includes('ALERTE') || msg.indicator.includes('RISQUE') ? 'alert' :
+                                    msg.indicator.includes('EXTENSION') ? 'extension' :
+                                    'assistant' // Par défaut, classifier comme assistant au lieu de conversation
+                                  }`}
                                   initial={{ scale: 0, rotate: -10 }}
                                   animate={{ scale: 1, rotate: 0 }}
                                   transition={{ delay: 0.2, type: "spring" }}
                                   whileHover={{ scale: 1.1, rotate: 5 }}
+                                  title={`Badge: ${msg.indicator} | Type: ${
+                                    msg.indicator.includes('CONVERSATION') ? 'conversation' :
+                                    msg.indicator.includes('ASSISTANT') ? 'assistant' :
+                                    msg.indicator.includes('RÉSUMÉ') || msg.indicator.includes('ANALYSE') ? 'analysis' :
+                                    msg.indicator.includes('ALERTE') || msg.indicator.includes('RISQUE') ? 'alert' :
+                                    msg.indicator.includes('EXTENSION') ? 'extension' :
+                                    'assistant'
+                                  }`}
+                                  style={{
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    color: 'white',
+                                    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                                    minWidth: 'fit-content'
+                                  }}
                                 >
                                   {msg.indicator}
                                 </motion.div>
