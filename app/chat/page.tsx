@@ -38,6 +38,49 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
+  // Effet pour traiter les paramètres de l'extension
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const source = urlParams.get('source');
+      const title = urlParams.get('title');
+      const content = urlParams.get('content');
+      const url = urlParams.get('url');
+
+      if (source === 'extension') {
+        // Message de bienvenue de l'extension
+        const welcomeMessage = {
+          type: "ai",
+          content: `🚀 **Analyse depuis l'extension ClairContrat !**
+
+✅ J'ai détecté que vous venez de l'extension avec un contrat à analyser.
+
+${title ? `📄 **Document détecté :** ${title}` : ''}
+${url ? `🌐 **Source :** ${url}` : ''}
+
+${content ? 
+`**Voici un aperçu du contenu détecté :**
+\`\`\`
+${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
+\`\`\`
+
+🤖 **Collez le contenu complet** dans le chat pour une analyse détaillée, ou utilisez les commandes suivantes :
+- \`/resume\` - Pour un résumé rapide
+- \`/points-cles\` - Pour extraire les points clés
+- \`/risques\` - Pour identifier les risques potentiels` : 
+'🤖 **Collez votre contrat** dans le chat pour commencer l\'analyse !'}`,
+          timestamp: new Date().toLocaleTimeString(),
+          indicator: "🚀 EXTENSION"
+        };
+
+        setMessages(prev => [...prev, welcomeMessage]);
+
+        // Nettoyer l'URL après traitement
+        window.history.replaceState({}, '', '/chat');
+      }
+    }
+  }, []);
+
   // Composant de particules flottantes pour l'arrière-plan
   const FloatingParticles = () => (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
