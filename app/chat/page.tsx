@@ -1,9 +1,7 @@
 "use client"
 import { motion } from "motion/react"
 import { useState, useRef, useEffect } from "react"
-import Navigation from "@/components/layout/navbar"
-import Footer from "@/components/layout/footer"
-import { Send, Upload, FileText, MessageCircle, AlertCircle, Brain, Trash2, Copy, Download } from "lucide-react"
+import { Send, Upload, FileText, MessageCircle, AlertCircle, Brain, Trash2, Copy, Download, Home, ArrowLeft, Settings } from "lucide-react"
 import axios from "axios"
 import { MessageFormatter } from "@/lib/message-formatter"
 import MessageRenderer from "@/components/message-renderer"
@@ -512,21 +510,117 @@ export default function ChatPage() {
   return (
     <main className="min-h-screen relative">
       <FloatingParticles />
-      <Navigation />
 
-      <section className="py-24 bg-white dark:bg-slate-900 pt-32">
+      {/* Barre de navigation simplifiée en haut */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="container mx-auto px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Logo/Retour */}
+            <div className="flex items-center gap-4">
+              <motion.button
+                onClick={() => window.location.href = '/'}
+                className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Retour à l'accueil</span>
+                <span className="sm:hidden">Accueil</span>
+              </motion.button>
+              
+              <div className="w-px h-6 bg-slate-300 dark:bg-slate-600"></div>
+              
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                <span className="font-bold text-slate-800 dark:text-white">Chat IA</span>
+              </div>
+            </div>
+
+            {/* Actions rapides */}
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={() => window.location.href = '/historique'}
+                className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-xl text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-xs font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FileText className="w-3 h-3" />
+                Historique
+              </motion.button>
+              
+              <motion.button
+                onClick={() => window.location.href = '/profil'}
+                className="flex items-center gap-2 px-3 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-xl text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-xs font-medium"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Settings className="w-3 h-3" />
+                <span className="hidden sm:inline">Profil</span>
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <section className="py-6 bg-white dark:bg-slate-900 pt-20">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-10"
+              className="text-center mb-8"
             >
-              <h1 className="text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white mb-4">Chat avec l'IA</h1>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <motion.div
+                  className="w-3 h-3 bg-green-500 rounded-full"
+                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Interface de Chat Active
+                </span>
+              </div>
+              
+              <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 dark:text-white mb-3">
+                Chat avec l'IA
+              </h1>
+              
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-4">
                 Posez vos questions directement à notre IA spécialisée dans l'analyse de contrats numériques
               </p>
+              
+              {/* Badges d'information */}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <motion.div
+                  className="flex items-center gap-2 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200/50 dark:border-cyan-800/20 rounded-full px-4 py-2 text-sm font-medium text-cyan-700 dark:text-cyan-300"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <Brain className="w-4 h-4" />
+                  IA Disponible
+                </motion.div>
+                
+                <motion.div
+                  className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-800/20 rounded-full px-4 py-2 text-sm font-medium text-emerald-700 dark:text-emerald-300"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <FileText className="w-4 h-4" />
+                  Analyse Instantanée
+                </motion.div>
+                
+                <motion.div
+                  className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200/50 dark:border-purple-800/20 rounded-full px-4 py-2 text-sm font-medium text-purple-700 dark:text-purple-300"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  Alertes Personnalisées
+                </motion.div>
+              </div>
             </motion.div>
 
             <div className="grid lg:grid-cols-4 gap-8 h-[750px]">
@@ -1333,7 +1427,152 @@ export default function ChatPage() {
         </div>
       </section>
 
-      <Footer />
+      {/* Bouton d'aide flottant */}
+      <motion.div
+        className="fixed bottom-6 left-6 z-50"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 2, type: "spring", stiffness: 200 }}
+      >
+        <motion.button
+          onClick={() => {
+            const helpMessage = `🎯 **Guide rapide :**
+
+**Pour analyser un contrat :**
+• Collez le texte dans la zone de chat
+• Ou utilisez "Résume-moi ce contrat"
+
+**Pour une analyse personnalisée :**
+• Sélectionnez votre profil dans la barre latérale
+• L'analyse s'adaptera automatiquement !
+
+**Navigation :**
+• ← Retour à l'accueil : bouton en haut à gauche
+• Historique et Profil : en haut à droite
+
+**Besoin d'aide ?** Tapez simplement "Comment ça marche ?" 😊`
+            
+            setMessages(prev => [...prev, {
+              type: "ai",
+              content: helpMessage,
+              timestamp: new Date().toLocaleTimeString(),
+              indicator: "💡 AIDE"
+            }])
+          }}
+          className="group bg-gradient-to-r from-emerald-500 to-green-600 text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white dark:border-slate-800"
+          whileHover={{ 
+            scale: 1.1, 
+            rotate: 5,
+            boxShadow: "0 20px 40px rgba(16, 185, 129, 0.4)"
+          }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <motion.div
+            animate={{ 
+              y: [0, -2, 0],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{ 
+              duration: 2, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+          >
+            <span className="text-xl">💡</span>
+          </motion.div>
+          
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
+              Guide d'utilisation
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800 dark:border-t-white"></div>
+            </div>
+          </div>
+        </motion.button>
+      </motion.div>
+
+      {/* Bouton de raccourci pour nouvelle conversation */}
+      <motion.div
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 2.2, type: "spring", stiffness: 200 }}
+      >
+        <motion.button
+          onClick={() => {
+            clearConversation()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+          className="group bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-white dark:border-slate-800"
+          whileHover={{ 
+            scale: 1.1, 
+            rotate: -5,
+            boxShadow: "0 20px 40px rgba(6, 182, 212, 0.4)"
+          }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <motion.div
+            animate={{ 
+              rotate: [0, 360],
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity, 
+              ease: "linear" 
+            }}
+          >
+            <span className="text-xl">🔄</span>
+          </motion.div>
+          
+          {/* Tooltip */}
+          <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
+              Nouvelle conversation
+              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800 dark:border-t-white"></div>
+            </div>
+          </div>
+        </motion.button>
+      </motion.div>
+
+      {/* Notification contextuelle pour les nouveaux utilisateurs */}
+      {messages.length <= 1 && (
+        <motion.div
+          className="fixed top-24 right-6 z-40 max-w-sm"
+          initial={{ opacity: 0, x: 100, scale: 0.8 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ delay: 3, type: "spring", stiffness: 200 }}
+          exit={{ opacity: 0, x: 100, scale: 0.8 }}
+        >
+          <div className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border border-cyan-200/50 dark:border-cyan-800/20 rounded-2xl p-4 shadow-xl backdrop-blur-xl">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-sm">👋</span>
+              </div>
+              <div className="min-w-0">
+                <h4 className="font-semibold text-cyan-800 dark:text-cyan-300 text-sm mb-1">
+                  Bienvenue dans Chat IA !
+                </h4>
+                <p className="text-xs text-cyan-700 dark:text-cyan-400">
+                  Collez un contrat ou posez une question pour commencer. 
+                  Cliquez sur 💡 pour plus d'aide.
+                </p>
+              </div>
+              <motion.button
+                onClick={() => {
+                  const notification = document.querySelector('[data-notification]')
+                  if (notification) notification.remove()
+                }}
+                className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-200 p-1"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <span className="sr-only">Fermer</span>
+                ✕
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </main>
   )
 }
