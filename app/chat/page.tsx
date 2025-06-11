@@ -10,6 +10,7 @@ import "./enhanced-chat.css"
 import "./sidebar-scrollbar.css"
 import "./message-renderer.css"
 import "./ai-message-styles.css"
+import "./simple-message-styles.css"
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")

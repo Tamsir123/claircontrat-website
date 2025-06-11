@@ -1,5 +1,9 @@
 /* Styles pour l'affichage simple et compact des messages */
 
+.message-content-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
 .message-content {
   line-height: 1.4;
   font-size: 14px;
@@ -8,6 +12,26 @@
 
 .dark .message-content {
   color: #d1d5db;
+}
+
+/* Contrôles vocaux */
+.voice-controls {
+  margin-bottom: 8px;
+}
+
+.voice-controls button {
+  border: 1px solid transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.voice-controls button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.voice-controls button:active {
+  transform: translateY(0);
 }
 
 /* Titres principaux */

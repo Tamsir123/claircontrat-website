@@ -6,6 +6,7 @@ interface MessageRendererProps {
 }
 
 const MessageRenderer: React.FC<MessageRendererProps> = ({ content, messageType }) => {
+
   // Fonction pour nettoyer et convertir le contenu avec espacement minimal
   const processContent = (rawContent: string): string => {
     let processedContent = rawContent;
@@ -73,10 +74,12 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({ content, messageType 
   const processedContent = processContent(content);
 
   return (
-    <div 
-      className="message-content"
-      dangerouslySetInnerHTML={{ __html: processedContent }}
-    />
+    <div className="message-content-wrapper">
+      <div 
+        className="message-content"
+        dangerouslySetInnerHTML={{ __html: processedContent }}
+      />
+    </div>
   );
 };
 
