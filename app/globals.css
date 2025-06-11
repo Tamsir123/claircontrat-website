@@ -111,3 +111,9 @@
 .card-highlight {
   @apply border-brand-200 dark:border-brand-700;
 }
+/* Ajouter ceci aux styles existants */
+.bg-pattern {
+  background-color: #f8fafc;
+  background-image: radial-gradient(#e2e8f0 0.5px, transparent 0.5px);
+  background-size: 15px 15px;
+}

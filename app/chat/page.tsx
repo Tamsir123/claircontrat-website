@@ -6,12 +6,21 @@ import Footer from "@/components/layout/footer"
 import { Send, Upload, FileText, MessageCircle, AlertCircle, Brain, Trash2, Copy, Download } from "lucide-react"
 import axios from "axios"
 import { MessageFormatter } from "@/lib/message-formatter"
+import MessageRenderer from "@/components/message-renderer"
+import "./modern-sidebar.css"
+import "./enhanced-chat.css"
+import "./sidebar-scrollbar.css"
+import "./message-renderer.css"
+import "./ai-message-styles.css"
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")
   const [contractText, setContractText] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [userPreference, setUserPreference] = useState("")
+  const [isTyping, setIsTyping] = useState(false)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [hoveredMessage, setHoveredMessage] = useState<number | null>(null)
   const [messages, setMessages] = useState<Array<{
     type: string;
     content: string;
@@ -28,10 +37,85 @@ export default function ChatPage() {
   ])
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+
+  // Composant de particules flottantes pour l'arrière-plan
+  const FloatingParticles = () => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {/* Particules principales */}
+      {[...Array(15)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: window.innerHeight + 100,
+          }}
+          animate={{
+            x: Math.random() * window.innerWidth,
+            y: -100,
+          }}
+          transition={{
+            duration: Math.random() * 15 + 10,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 8,
+          }}
+        />
+      ))}
+      
+      {/* Particules géométriques */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={`geo-${i}`}
+          className="absolute w-2 h-2 border border-blue-400/20 rotate-45"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: window.innerHeight + 50,
+            rotate: 0,
+          }}
+          animate={{
+            x: Math.random() * window.innerWidth,
+            y: -50,
+            rotate: 360,
+          }}
+          transition={{
+            duration: Math.random() * 20 + 15,
+            repeat: Infinity,
+            ease: "linear",
+            delay: Math.random() * 10,
+          }}
+        />
+      ))}
+      
+      {/* Particules lumineuses */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={`light-${i}`}
+          className="absolute w-3 h-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-sm"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: window.innerHeight + 200,
+            scale: 0.5,
+          }}
+          animate={{
+            x: Math.random() * window.innerWidth,
+            y: -200,
+            scale: [0.5, 1.2, 0.5],
+          }}
+          transition={{
+            duration: Math.random() * 25 + 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: Math.random() * 12,
+          }}
+        />
+      ))}
+    </div>
+  )
 
   const quickQuestions = [
-    "Résume-moi ce contrat", // → SUMMARY
-    "Analyse personnalisée selon mon profil", // → RISK-ALERT (si profil sélectionné)
+    "Résume-moi ce contrat", // → SUMMARY*"Analyse personnalisée selon mon profil", 
     "Bonjour, comment ça marche ?", // → CHAT
     "Quels sont mes risques pour moi ?", // → RISK-ALERT (si profil sélectionné)
     "Comment puis-je résilier ?", // → CHAT
@@ -60,6 +144,29 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Gestion du scroll pour afficher/masquer le bouton "scroll to top"
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current
+    if (!chatContainer) return
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainer
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100
+      setShowScrollTop(!isNearBottom && scrollTop > 200)
+    }
+
+    chatContainer.addEventListener('scroll', handleScroll)
+    return () => chatContainer.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Fonction pour remonter en haut
+  const scrollToTop = () => {
+    chatContainerRef.current?.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
   // Fonction pour coller un contrat
   const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -403,7 +510,8 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      <FloatingParticles />
       <Navigation />
 
       <section className="py-24 bg-white dark:bg-slate-900 pt-32">
@@ -413,331 +521,812 @@ export default function ChatPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-center mb-16"
+              className="text-center mb-10"
             >
-              <h1 className="text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white mb-6">Chat avec l'IA</h1>
+              <h1 className="text-4xl lg:text-5xl font-bold text-slate-800 dark:text-white mb-4">Chat avec l'IA</h1>
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 Posez vos questions directement à notre IA spécialisée dans l'analyse de contrats numériques
               </p>
             </motion.div>
 
-            <div className="grid lg:grid-cols-4 gap-8">
-              {/* Barre latérale */}
+            <div className="grid lg:grid-cols-4 gap-8 h-[750px]">
+              {/* Barre latérale moderne */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
-                className="lg:col-span-1 space-y-6"
+                className="lg:col-span-1 h-full overflow-y-auto scrollbar-hide space-y-3"
               >
-                {/* Import de document */}
-                <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-2xl p-6 border border-cyan-100 dark:border-cyan-800/20">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <Upload className="w-5 h-5 text-cyan-600" />
-                    Importer un contrat
-                  </h3>
-                  <div className="space-y-3">
-                    <button className="w-full bg-white dark:bg-slate-800 border-2 border-dashed border-cyan-300 dark:border-cyan-600 rounded-xl p-4 text-center hover:border-cyan-400 transition-colors group">
-                      <FileText className="w-8 h-8 text-cyan-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-                      <p className="text-sm text-slate-600 dark:text-slate-300">Glissez un PDF ou cliquez</p>
-                    </button>
-                    <button className="w-full bg-cyan-600 text-white rounded-xl py-2 px-4 text-sm font-medium hover:bg-cyan-700 transition-colors">
-                      Coller du texte
-                    </button>
-                  </div>
-                </div>
-
-                {/* Contrôles de conversation */}
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-800/20">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5 text-purple-600" />
-                    Conversation
-                  </h3>
-                  <div className="space-y-3">
-                    <button
-                      onClick={clearConversation}
-                      className="w-full bg-red-100 hover:bg-red-200 text-red-700 rounded-lg py-2 px-4 text-sm font-medium transition-colors flex items-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Effacer le chat
-                    </button>
-                    {contractText && (
-                      <div className="bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/20 rounded-lg p-3">
-                        <p className="text-sm text-green-700 dark:text-green-300">
-                          ✅ Contrat en contexte ({contractText.length} caractères)
-                        </p>
+                {/* Statistiques en temps réel - Nouvelle section captivante */}
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 to-purple-600/30 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 rounded-3xl p-4 shadow-2xl">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                        📊 Session actuelle
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">En ligne</span>
                       </div>
-                    )}
-                    <div className="text-xs text-slate-500 dark:text-slate-400">
-                      Messages: {messages.length}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Questions rapides */}
-                <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5 text-slate-600" />
-                    Questions rapides
-                  </h3>
-                  <div className="space-y-2">
-                    {quickQuestions.map((question, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setMessage(question)}
-                        className="w-full text-left text-sm text-slate-600 dark:text-slate-300 hover:text-cyan-600 hover:bg-white dark:hover:bg-slate-700 rounded-lg p-3 transition-all duration-200"
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Alerte de risque personnalisée */}
-                <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-2xl p-6 border border-red-100 dark:border-red-800/20">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    Alerte automatique
-                  </h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm text-slate-600 dark:text-slate-300 mb-2 block">
-                        Choisissez votre profil pour une analyse instantanée :
-                      </label>
-                      <select
-                        value={userPreference}
-                        onChange={(e) => handlePreferenceChange(e.target.value)}
-                        disabled={!contractText || isLoading}
-                        className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <option value="">Sélectionnez votre profil...</option>
-                        {userPreferences.map((pref, index) => (
-                          <option key={index} value={pref.value}>
-                            {pref.label}
-                          </option>
-                        ))}
-                      </select>
                     </div>
                     
-                    {!contractText && (
-                      <div className="bg-amber-100 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/20 rounded-lg p-3">
-                        <p className="text-sm text-amber-700 dark:text-amber-300">
-                          ⚠️ Collez d'abord un contrat dans le chat
-                        </p>
-                      </div>
-                    )}
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.div 
+                        className="text-center p-2 bg-white/40 dark:bg-slate-800/40 rounded-xl border border-white/20 dark:border-slate-700/20"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                          {messages.length}
+                        </div>
+                        <div className="text-xs text-slate-600 dark:text-slate-400">Messages</div>
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="text-center p-2 bg-white/40 dark:bg-slate-800/40 rounded-xl border border-white/20 dark:border-slate-700/20"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
+                          {contractText ? Math.round(contractText.length / 1000) : 0}K
+                        </div>
+                        <div className="text-xs text-slate-600 dark:text-slate-400">Caractères</div>
+                      </motion.div>
+                    </div>
                     
-                    {contractText && !userPreference && (
-                      <div className="bg-blue-100 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/20 rounded-lg p-3">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
-                          💡 Sélectionnez un profil → Analyse automatique !
-                        </p>
-                      </div>
-                    )}
-                    
-                    {contractText && userPreference && (
-                      <div className="bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800/20 rounded-lg p-3">
-                        <p className="text-sm text-green-700 dark:text-green-300">
-                          ✅ Profil actif : {userPreferences.find(p => p.value === userPreference)?.label}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {isLoading && (
-                      <div className="bg-cyan-100 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800/20 rounded-lg p-3">
+                    {userPreference && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mt-3 p-2 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-xl border border-emerald-300/30"
+                      >
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-cyan-500 border-t-transparent"></div>
-                          <p className="text-sm text-cyan-700 dark:text-cyan-300">
-                            🚨 Génération de l'analyse personnalisée...
-                          </p>
+                          <div className="w-5 h-5 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center">
+                            <span className="text-xs">🎯</span>
+                          </div>
+                          <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 truncate">
+                            {userPreferences.find(p => p.value === userPreference)?.label}
+                          </span>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+                {/* Import de document - Design moderne avec glassmorphism */}
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 rounded-3xl p-4 shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl blur opacity-75"></div>
+                        <div className="relative bg-gradient-to-r from-cyan-500 to-blue-600 p-2 rounded-xl">
+                          <Upload className="w-5 h-5 text-white" />
                         </div>
                       </div>
-                    )}
+                      <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                        Importer un contrat
+                      </h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {/* Zone de drop modernisée */}
+                        <motion.button 
+                        className="relative w-full group/drop overflow-hidden shine-effect"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10 opacity-0 group-hover/drop:opacity-100 transition-all duration-300"></div>
+                        <div className="relative bg-white dark:bg-slate-700/50 border-2 border-dashed border-cyan-300 dark:border-cyan-500/50 rounded-2xl p-6 text-center group-hover/drop:border-cyan-400 dark:group-hover/drop:border-cyan-400 transition-all duration-300 neon-border">
+                          <motion.div
+                            animate={{ y: [0, -5, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            className="float-animation"
+                          >
+                            <FileText className="w-10 h-10 text-cyan-500 mx-auto mb-3 group-hover/drop:text-cyan-600 transition-colors" />
+                          </motion.div>
+                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Glissez un PDF ici
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                            ou cliquez pour parcourir
+                          </p>
+                        </div>
+                      </motion.button>
+                      
+                      {/* Bouton coller modernisé */}
+                      <motion.button 
+                        className="w-full relative overflow-hidden group/paste morph-button"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-700 opacity-0 group-hover/paste:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-2xl py-3 px-5 text-sm font-semibold shadow-lg animated-gradient">
+                          <span className="flex items-center justify-center gap-2">
+                            <Copy className="w-4 h-4" />
+                            Coller du texte
+                          </span>
+                        </div>
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Historique */}
-                <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4">Historique récent</h3>
-                  <div className="space-y-3">
-                    <div className="text-sm">
-                      <p className="font-medium text-slate-700 dark:text-slate-300">Contrat Netflix</p>
-                      <p className="text-slate-500 dark:text-slate-400">Il y a 2 heures</p>
+                {/* Contrôles de conversation - Style glassmorphism */}
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 rounded-3xl p-4 shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl blur opacity-75"></div>
+                        <div className="relative bg-gradient-to-r from-purple-500 to-pink-600 p-2 rounded-xl">
+                          <MessageCircle className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                        Conversation
+                      </h3>
                     </div>
-                    <div className="text-sm">
-                      <p className="font-medium text-slate-700 dark:text-slate-300">CGU Instagram</p>
-                      <p className="text-slate-500 dark:text-slate-400">Hier</p>
-                    </div>
-                    <div className="text-sm">
-                      <p className="font-medium text-slate-700 dark:text-slate-300">Conditions Spotify</p>
-                      <p className="text-slate-500 dark:text-slate-400">Il y a 3 jours</p>
+                    
+                    <div className="space-y-4">
+                      <motion.button
+                        onClick={clearConversation}
+                        className="w-full bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 hover:from-red-100 hover:to-rose-100 dark:hover:from-red-900/30 dark:hover:to-rose-900/30 text-red-700 dark:text-red-400 rounded-2xl py-3 px-4 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 border border-red-200/50 dark:border-red-800/20"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Effacer le chat
+                      </motion.button>
+                      
+                      {contractText && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border border-emerald-200/50 dark:border-emerald-800/20 rounded-2xl p-4"
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                              Contrat actif
+                            </p>
+                          </div>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                            {contractText.length.toLocaleString()} caractères
+                          </p>
+                        </motion.div>
+                      )}
+                      
+                      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-700/20 rounded-xl p-3">
+                        <span>Messages</span>
+                        <span className="font-bold text-cyan-600 dark:text-cyan-400">{messages.length}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Aide intelligente */}
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-800/20">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-emerald-600" />
-                    IA Intelligente
-                  </h3>
-                  <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium">📋 Contrat complet</span>
-                        <p className="text-xs">Utilise le résumé automatique</p>
+                {/* Questions rapides - Nouveau design avec animations */}
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/20 to-purple-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 rounded-3xl p-4 shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-75"></div>
+                        <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-xl">
+                          <MessageCircle className="w-5 h-5 text-white" />
+                        </div>
                       </div>
+                      <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                        Questions rapides
+                      </h3>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium">🚨 Analyse personnalisée</span>
-                        <p className="text-xs">Selon votre profil sélectionné</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium">💡 Question spécifique</span>
-                        <p className="text-xs">Sur le contrat en contexte</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <span className="font-medium">🤖 Chat général</span>
-                        <p className="text-xs">Conversation intelligente</p>
-                      </div>
+                    
+                    <div className="space-y-2">
+                      {quickQuestions.map((question, index) => (
+                        <motion.button
+                          key={index}
+                          onClick={() => setMessage(question)}
+                          className="w-full text-left text-sm bg-white/50 dark:bg-slate-700/30 hover:bg-white dark:hover:bg-slate-600/50 text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 rounded-xl p-3 transition-all duration-300 border border-slate-200/30 dark:border-slate-600/20 hover:border-indigo-300 dark:hover:border-indigo-500/50 group/question"
+                          whileHover={{ scale: 1.02, x: 5 }}
+                          whileTap={{ scale: 0.98 }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full opacity-0 group-hover/question:opacity-100 transition-opacity"></div>
+                            {question}
+                          </div>
+                        </motion.button>
+                      ))}
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Préférences utilisateur */}
-                <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6">
-                  <h3 className="font-semibold text-slate-800 dark:text-white mb-4">Mes préférences</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                      <span className="text-slate-600 dark:text-slate-300">Protection des données</span>
+                {/* Alerte de risque personnalisée - Design futuriste */}
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 to-orange-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 rounded-3xl p-4 shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-600 rounded-xl blur opacity-75"></div>
+                        <div className="relative bg-gradient-to-r from-red-500 to-orange-600 p-2 rounded-xl">
+                          <AlertCircle className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-slate-800 dark:text-white text-base">
+                        Analyse personnalisée
+                      </h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                      <span className="text-slate-600 dark:text-slate-300">Clauses financières</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                      <span className="text-slate-600 dark:text-slate-300">Conditions de résiliation</span>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 block">
+                          🎯 Votre profil pour une analyse sur-mesure
+                        </label>
+                        <div className="relative">
+                          <select
+                            value={userPreference}
+                            onChange={(e) => handlePreferenceChange(e.target.value)}
+                            disabled={!contractText || isLoading}
+                            className="w-full bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm border-2 border-slate-200/50 dark:border-slate-600/50 rounded-2xl p-3 text-sm font-medium text-slate-700 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed focus:border-red-400 dark:focus:border-red-400 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-800/20 transition-all duration-300 appearance-none cursor-pointer"
+                          >
+                            <option value="">✨ Choisissez votre profil...</option>
+                            {userPreferences.map((pref, index) => (
+                              <option key={index} value={pref.value}>
+                                {pref.label}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <div className="w-2 h-2 border-r-2 border-b-2 border-slate-400 dark:border-slate-500 rotate-45"></div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* États visuels améliorés */}
+                      {!contractText && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border-l-4 border-amber-400 rounded-2xl p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                              <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                                Contrat requis
+                              </p>
+                              <p className="text-xs text-amber-700 dark:text-amber-400">
+                                Importez d'abord un contrat pour l'analyse
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {contractText && !userPreference && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border-l-4 border-blue-400 rounded-2xl p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                              <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+                                Prêt pour l'analyse !
+                              </p>
+                              <p className="text-xs text-blue-700 dark:text-blue-400">
+                                Sélectionnez votre profil → Analyse automatique
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {contractText && userPreference && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-l-4 border-emerald-400 rounded-2xl p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                              <motion.div
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                              >
+                                ✅
+                              </motion.div>
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                                Profil actif
+                              </p>
+                              <p className="text-xs text-emerald-700 dark:text-emerald-400 truncate">
+                                {userPreferences.find(p => p.value === userPreference)?.label}
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {isLoading && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border-l-4 border-cyan-400 rounded-2xl p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center">
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-4 h-4 border-2 border-cyan-600 border-t-transparent rounded-full"
+                              />
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-cyan-800 dark:text-cyan-300">
+                                Analyse en cours...
+                              </p>
+                              <p className="text-xs text-cyan-700 dark:text-cyan-400">
+                                Génération de votre rapport personnalisé
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
 
-              {/* Interface de chat */}
+              {/* Interface de chat modernisée */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="lg:col-span-3"
               >
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 h-[700px] flex flex-col">
-                  {/* En-tête du chat */}
-                  <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-6 rounded-t-2xl">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <Brain className="w-5 h-5" />
+                {/* Container principal avec effet glassmorphism */}
+                <motion.div 
+                  className="relative group/chat"
+                  whileHover={{ scale: 1.005 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  {/* Effet de halo lumineux */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/30 to-blue-600/30 rounded-3xl blur-2xl group-hover/chat:blur-3xl transition-all duration-500 opacity-75"></div>
+                  
+                  {/* Interface principale */}
+                  <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/30 dark:border-slate-700/30 rounded-3xl shadow-2xl h-[750px] flex flex-col overflow-hidden">
+                    
+                    {/* En-tête du chat amélioré */}
+                    <div className="relative bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white p-6 rounded-t-3xl overflow-hidden">
+                      {/* Particules flottantes dans l'en-tête */}
+                      <div className="absolute inset-0 pointer-events-none">
+                        {[...Array(8)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute w-1 h-1 bg-white/30 rounded-full"
+                            initial={{
+                              x: Math.random() * 400,
+                              y: 50,
+                            }}
+                            animate={{
+                              x: Math.random() * 400,
+                              y: -10,
+                            }}
+                            transition={{
+                              duration: Math.random() * 3 + 2,
+                              repeat: Infinity,
+                              ease: "linear",
+                              delay: Math.random() * 2,
+                            }}
+                          />
+                        ))}
                       </div>
-                      <div>
-                        <h3 className="font-semibold">Assistant IA Consent Radar</h3>
-                        <p className="text-sm text-cyan-100">En ligne • Spécialisé en contrats numériques</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Messages */}
-                  <div className="flex-1 p-6 overflow-y-auto space-y-4">
-                    {messages.map((msg, index) => (
-                      <div key={index} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
-                        <div
-                          className={`max-w-[80%] ${
-                            msg.type === "user"
-                              ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
-                              : "bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
-                          } rounded-2xl p-4 relative`}
-                        >
-                          {/* Indicateur de type d'analyse pour les messages IA */}
-                          {msg.type === "ai" && msg.indicator && (
-                            <div className="absolute -top-2 -left-2 bg-cyan-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg">
-                              {msg.indicator}
-                            </div>
-                          )}
-                          
-                          {msg.type === "ai" ? (
-                            <div 
-                              className="text-sm leading-relaxed"
-                              dangerouslySetInnerHTML={{ 
-                                __html: MessageFormatter.formatByType(msg.content, msg.analysisType) 
-                              }}
-                            />
-                          ) : (
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                          )}
-                          <p
-                            className={`text-xs mt-2 ${msg.type === "user" ? "text-cyan-100" : "text-slate-500 dark:text-slate-400"}`}
+                      
+                      <div className="relative flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          {/* Avatar IA animé */}
+                          <motion.div 
+                            className="relative w-12 h-12 bg-white/20 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/30"
+                            animate={{ 
+                              boxShadow: ["0 0 20px rgba(255,255,255,0.2)", "0 0 30px rgba(255,255,255,0.4)", "0 0 20px rgba(255,255,255,0.2)"],
+                              scale: [1, 1.05, 1]
+                            }}
+                            transition={{ 
+                              duration: 3, 
+                              repeat: Infinity,
+                              ease: "easeInOut"
+                            }}
                           >
-                            {msg.timestamp}
-                            {msg.analysisType && (
-                              <span className="ml-2 opacity-50">• {msg.analysisType}</span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Indicateur de chargement */}
-                    {isLoading && (
-                      <div className="flex justify-start">
-                        <div className="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl p-4">
-                          <div className="flex items-center gap-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-cyan-500 border-t-transparent"></div>
-                            <span className="text-sm">L'IA analyse votre message...</span>
+                            <Brain className="w-6 h-6 text-white" />
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></div>
+                          </motion.div>
+                          
+                          <div>
+                            <motion.h3 
+                              className="font-bold text-xl"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.3 }}
+                            >
+                              Consent Radar AI
+                            </motion.h3>
+                            <motion.div 
+                              className="flex items-center gap-2 text-sm text-cyan-100"
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.5 }}
+                            >
+                              <div className="flex items-center gap-1">
+                                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                                <span>En ligne</span>
+                              </div>
+                              <span>•</span>
+                              <span>Spécialisé en contrats numériques</span>
+                            </motion.div>
                           </div>
                         </div>
+                        
+                        {/* Indicateurs de statut */}
+                        <div className="flex items-center gap-2">
+                          <motion.div 
+                            className="bg-white/20 backdrop-blur-xl border border-white/30 rounded-xl px-3 py-1 text-xs font-medium"
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            <span className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                              IA Active
+                            </span>
+                          </motion.div>
+                          {contractText && (
+                            <motion.div 
+                              className="bg-white/20 backdrop-blur-xl border border-white/30 rounded-xl px-3 py-1 text-xs font-medium"
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              <span className="flex items-center gap-1">
+                                <FileText className="w-3 h-3" />
+                                Contrat chargé
+                              </span>
+                            </motion.div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  {/* Zone de saisie */}
-                  <div className="p-6 border-t border-slate-200 dark:border-slate-700">
-                    <div className="flex gap-3">
-                      <input
-                        type="text"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onPaste={handlePaste}
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter" && !isLoading) {
-                            e.preventDefault()
-                            handleSendMessage()
-                          }
-                        }}
-                        disabled={isLoading}
-                        placeholder="Collez un contrat ou posez une question..."
-                        className="flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 disabled:opacity-50"
-                      />
-                      <button
-                        onClick={handleSendMessage}
-                        disabled={!message.trim() || isLoading}
-                        className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isLoading ? (
-                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                        ) : (
-                          <Send className="w-5 h-5" />
-                        )}
-                      </button>
+                    {/* Messages avec design modernisé */}
+                    <div 
+                      ref={chatContainerRef}
+                      className="flex-1 p-6 overflow-y-auto space-y-6 relative"
+                    >
+                      {/* Pattern d'arrière-plan subtil */}
+                      <div className="absolute inset-0 opacity-5 dark:opacity-10 pointer-events-none">
+                        <div className="absolute inset-0" style={{
+                          backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(148,163,184) 1px, transparent 0)',
+                          backgroundSize: '20px 20px'
+                        }}></div>
+                      </div>
+                      
+                      {messages.map((msg, index) => (
+                        <motion.div 
+                          key={index} 
+                          className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
+                          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ 
+                            duration: 0.4, 
+                            delay: index * 0.1,
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30
+                          }}
+                          onMouseEnter={() => setHoveredMessage(index)}
+                          onMouseLeave={() => setHoveredMessage(null)}
+                        >
+                          <div className={`relative max-w-[85%] ${msg.type === "user" ? "ml-auto" : "mr-auto"}`}>
+                            {/* Message container avec glassmorphism */}
+                            <motion.div
+                              className={`relative ${
+                                msg.type === "user"
+                                  ? "bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/25"
+                                  : "bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 text-slate-800 dark:text-slate-200 shadow-xl"
+                              } rounded-3xl p-5 relative overflow-hidden group/message message-bubble`}
+                              whileHover={{ 
+                                scale: 1.02,
+                                y: -2,
+                                transition: { type: "spring", stiffness: 400 }
+                              }}
+                            >
+                              {/* Effet brillant au survol */}
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/message:translate-x-[100%] transition-transform duration-1000 pointer-events-none"></div>
+                              
+                              {/* Indicateur de type d'analyse modernisé */}
+                              {msg.type === "ai" && msg.indicator && (
+                                <motion.div 
+                                  className="absolute -top-3 -left-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-lg border-2 border-white dark:border-slate-800"
+                                  initial={{ scale: 0, rotate: -10 }}
+                                  animate={{ scale: 1, rotate: 0 }}
+                                  transition={{ delay: 0.2, type: "spring" }}
+                                  whileHover={{ scale: 1.1, rotate: 5 }}
+                                >
+                                  {msg.indicator}
+                                </motion.div>
+                              )}
+                              
+                              {/* Avatar pour les messages IA */}
+                              {msg.type === "ai" && (
+                                <motion.div 
+                                  className="absolute -left-4 top-0 w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-800 avatar-breathing"
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{ delay: 0.3, type: "spring" }}
+                                >
+                                  <Brain className="w-4 h-4 text-white" />
+                                </motion.div>
+                              )}
+                              
+                              {/* Contenu du message */}
+                              <div className={`${msg.type === "ai" ? "ml-4" : ""} relative z-10`}>
+                                {msg.type === "ai" ? (
+                                  <div className="text-sm leading-relaxed">
+                                    <MessageRenderer 
+                                      content={msg.content} 
+                                      messageType={msg.analysisType}
+                                    />
+                                  </div>
+                                ) : (
+                                  <MessageRenderer 
+                                    content={msg.content} 
+                                    messageType="user"
+                                  />
+                                )}
+                                
+                                {/* Métadonnées du message */}
+                                <div className={`flex items-center justify-between mt-3 text-xs ${
+                                  msg.type === "user" ? "text-cyan-100" : "text-slate-500 dark:text-slate-400"
+                                }`}>
+                                  <span className="flex items-center gap-1">
+                                    <div className="w-1 h-1 bg-current rounded-full status-pulse"></div>
+                                    {msg.timestamp}
+                                    {msg.analysisType && (
+                                      <span className="ml-2 opacity-70">• {msg.analysisType}</span>
+                                    )}
+                                  </span>
+                                  
+                                  {/* Actions rapides */}
+                                  <div className={`flex items-center gap-1 message-reactions ${
+                                    hoveredMessage === index ? 'opacity-100' : 'opacity-0'
+                                  } transition-all duration-300`}>
+                                    <motion.button
+                                      className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                                      whileHover={{ scale: 1.2 }}
+                                      whileTap={{ scale: 0.8 }}
+                                      onClick={() => navigator.clipboard.writeText(msg.content)}
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </motion.button>
+                                    {msg.type === "ai" && (
+                                      <motion.button
+                                        className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                                        whileHover={{ scale: 1.2 }}
+                                        whileTap={{ scale: 0.8 }}
+                                      >
+                                        <Download className="w-3 h-3" />
+                                      </motion.button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      ))}
+
+                      {/* Indicateur de chargement modernisé */}
+                      {isLoading && (
+                        <motion.div 
+                          className="flex justify-start"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                        >
+                          <div className="relative">
+                            {/* Avatar IA pour le chargement */}
+                            <div className="absolute -left-4 top-0 w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-800 avatar-breathing">
+                              <Brain className="w-4 h-4 text-white" />
+                            </div>
+                            
+                            <motion.div 
+                              className="ml-4 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/20 text-slate-800 dark:text-slate-200 rounded-3xl p-5 shadow-xl shimmer"
+                              animate={{ 
+                                boxShadow: ["0 10px 30px rgba(0,0,0,0.1)", "0 10px 40px rgba(0,0,0,0.15)", "0 10px 30px rgba(0,0,0,0.1)"]
+                              }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                            >
+                              <div className="flex items-center gap-3">
+                                {/* Animation de typing dots améliorée */}
+                                <div className="typing-dots">
+                                  {[0, 1, 2].map((i) => (
+                                    <div key={i} className="typing-dot" />
+                                  ))}
+                                </div>
+                                
+                                <div>
+                                  <motion.span 
+                                    className="text-sm font-medium"
+                                    animate={{ opacity: [0.7, 1, 0.7] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                  >
+                                    L'IA analyse votre message...
+                                  </motion.span>
+                                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Génération en cours • IA Consent Radar
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      )}
+                      
+                      {/* Bouton de scroll vers le haut */}
+                      {showScrollTop && (
+                        <motion.button
+                          className="fixed bottom-32 right-8 w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full shadow-lg z-50 flex items-center justify-center neon-glow"
+                          onClick={scrollToTop}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0 }}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <div className="w-4 h-4 border-l-2 border-t-2 border-white transform rotate-45 -translate-y-0.5"></div>
+                        </motion.button>
+                      )}
+                      
+                      {/* Référence pour le scroll automatique */}
+                      <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Zone de saisie modernisée */}
+                    <div className="relative p-6 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl border-t border-white/20 dark:border-slate-700/20">
+                      {/* Effet de halo sur la zone de saisie */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/5 to-transparent pointer-events-none"></div>
+                      
+                      <div className="relative flex items-end gap-4">
+                        {/* Champ de saisie avec design amélioré */}
+                        <div className="flex-1 relative">
+                          <motion.div
+                            className="relative"
+                            whileFocus={{ scale: 1.02 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                          >
+                            <textarea
+                              value={message}
+                              onChange={(e) => setMessage(e.target.value)}
+                              onPaste={handlePaste}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey && !isLoading) {
+                                  e.preventDefault()
+                                  handleSendMessage()
+                                }
+                              }}
+                              disabled={isLoading}
+                              placeholder="💬 Collez un contrat ou posez une question... (Shift+Enter pour nouvelle ligne)"
+                              rows={message.split('\n').length || 1}
+                              className="w-full bg-white/80 dark:bg-slate-700/80 backdrop-blur-xl border-2 border-slate-200/50 dark:border-slate-600/50 rounded-2xl px-5 py-4 pr-14 focus:outline-none focus:border-cyan-400 dark:focus:border-cyan-400 focus:ring-4 focus:ring-cyan-200/20 dark:focus:ring-cyan-800/20 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 disabled:opacity-50 transition-all duration-300 resize-none min-h-[60px] max-h-32 shadow-lg font-medium text-sm leading-relaxed"
+                            />
+                            
+                            {/* Indicateur de caractères */}
+                            <div className="absolute bottom-2 right-16 text-xs text-slate-400 dark:text-slate-500">
+                              {message.length > 0 && (
+                                <motion.span
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  className={`px-2 py-1 rounded-full bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm ${
+                                    message.length > 5000 ? 'text-red-500' : 'text-slate-500'
+                                  }`}
+                                >
+                                  {message.length.toLocaleString()}
+                                </motion.span>
+                              )}
+                            </div>
+                          </motion.div>
+                        </div>
+
+                        {/* Bouton d'envoi avec animations */}
+                        <motion.button
+                          onClick={handleSendMessage}
+                          disabled={!message.trim() || isLoading}
+                          className="relative bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-4 rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group/send"
+                          whileHover={{ 
+                            scale: 1.05,
+                            boxShadow: "0 20px 40px rgba(6, 182, 212, 0.4)"
+                          }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                        >
+                          {/* Effet de brillance */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover/send:translate-x-[100%] transition-transform duration-700"></div>
+                          
+                          <div className="relative flex items-center justify-center">
+                            {isLoading ? (
+                              <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                              />
+                            ) : (
+                              <motion.div
+                                whileHover={{ x: 2 }}
+                                transition={{ type: "spring", stiffness: 400 }}
+                              >
+                                <Send className="w-5 h-5" />
+                              </motion.div>
+                            )}
+                          </div>
+                        </motion.button>
+                      </div>
+
+                      {/* Suggestions rapides d'actions */}
+                      {!isLoading && message.length === 0 && (
+                        <motion.div 
+                          className="mt-4 flex flex-wrap gap-2"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                        >
+                          {[
+                            { icon: "📋", text: "Analyser un contrat", color: "blue" },
+                            { icon: "🤔", text: "Poser une question", color: "purple" },
+                            { icon: "🚨", text: "Alerte personnalisée", color: "red" },
+                          ].map((action, index) => (
+                            <motion.button
+                              key={index}
+                              onClick={() => setMessage(action.text === "Analyser un contrat" ? "Résume-moi ce contrat" : action.text === "Poser une question" ? "Bonjour, comment ça marche ?" : "Analyse personnalisée selon mon profil")}
+                              className={`flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-${action.color}-50 to-${action.color}-100 dark:from-${action.color}-900/20 dark:to-${action.color}-800/20 border border-${action.color}-200/50 dark:border-${action.color}-800/20 rounded-xl text-${action.color}-700 dark:text-${action.color}-300 text-xs font-medium hover:scale-105 transition-all duration-200`}
+                              whileHover={{ y: -2 }}
+                              whileTap={{ scale: 0.95 }}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.7 + index * 0.1 }}
+                            >
+                              <span>{action.icon}</span>
+                              {action.text}
+                            </motion.button>
+                          ))}
+                        </motion.div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>

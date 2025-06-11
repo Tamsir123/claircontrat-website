@@ -1,5 +1,5 @@
 "use client"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { Upload, Brain, CheckCircle } from "lucide-react"
 
 export default function HowItWorks() {

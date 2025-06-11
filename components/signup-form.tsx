@@ -1,5 +1,5 @@
 "use client"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { User, Lock, Users, Settings } from "lucide-react"
 

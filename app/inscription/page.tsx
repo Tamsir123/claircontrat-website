@@ -1,5 +1,5 @@
 // "use client"
-// import { motion } from "motion/react"
+// import { motion } from "framer-motion"
 // import type React from "react"
 
 // import { useState } from "react"
@@ -321,7 +321,7 @@
 
 
 "use client"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import type React from "react"
 import { useState } from "react"
 import axios from "axios"

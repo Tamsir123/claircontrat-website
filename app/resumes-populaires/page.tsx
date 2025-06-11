@@ -1,5 +1,5 @@
 "use client"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { CardSpotlight } from "@/components/ui/card-spotlight"
 import Navigation from "@/components/layout/navbar"
 import Footer from "@/components/layout/footer"

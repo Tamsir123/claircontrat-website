@@ -1,5 +1,5 @@
 "use client"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { NavbarButton } from "@/components/ui/resizable-navbar"
 import { Brain, FileText, Shield, Zap } from "lucide-react"
 
