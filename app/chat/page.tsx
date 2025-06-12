@@ -21,6 +21,8 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [hoveredMessage, setHoveredMessage] = useState<number | null>(null)
+  const [isClient, setIsClient] = useState(false)
+  const [windowSize, setWindowSize] = useState({ width: 1200, height: 800 })
   const [messages, setMessages] = useState<Array<{
     type: string;
     content: string;
@@ -39,9 +41,28 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
+  // Initialiser côté client
+  useEffect(() => {
+    setIsClient(true)
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Effet pour traiter les paramètres de l'extension
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isClient && typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const source = urlParams.get('source');
       const title = urlParams.get('title');
@@ -80,24 +101,27 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         window.history.replaceState({}, '', '/chat');
       }
     }
-  }, []);
+  }, [isClient]);
 
   // Composant de particules flottantes pour l'arrière-plan
-  const FloatingParticles = () => (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {/* Particules principales */}
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: window.innerHeight + 100,
-          }}
-          animate={{
-            x: Math.random() * window.innerWidth,
-            y: -100,
-          }}
+  const FloatingParticles = () => {
+    if (!isClient) return null;
+    
+    return (
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Particules principales */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+            initial={{
+              x: Math.random() * windowSize.width,
+              y: windowSize.height + 100,
+            }}
+            animate={{
+              x: Math.random() * windowSize.width,
+              y: -100,
+            }}
           transition={{
             duration: Math.random() * 15 + 10,
             repeat: Infinity,
@@ -105,23 +129,21 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
             delay: Math.random() * 8,
           }}
         />
-      ))}
-      
-      {/* Particules géométriques */}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={`geo-${i}`}
-          className="absolute w-2 h-2 border border-blue-400/20 rotate-45"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: window.innerHeight + 50,
-            rotate: 0,
-          }}
-          animate={{
-            x: Math.random() * window.innerWidth,
-            y: -50,
-            rotate: 360,
-          }}
+      ))}        {/* Particules géométriques */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`geo-${i}`}
+            className="absolute w-2 h-2 border border-blue-400/20 rotate-45"
+            initial={{
+              x: Math.random() * windowSize.width,
+              y: windowSize.height + 50,
+              rotate: 0,
+            }}
+            animate={{
+              x: Math.random() * windowSize.width,
+              y: -50,
+              rotate: 360,
+            }}
           transition={{
             duration: Math.random() * 20 + 15,
             repeat: Infinity,
@@ -129,33 +151,32 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
             delay: Math.random() * 10,
           }}
         />
-      ))}
-      
-      {/* Particules lumineuses */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={`light-${i}`}
-          className="absolute w-3 h-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-sm"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: window.innerHeight + 200,
-            scale: 0.5,
-          }}
-          animate={{
-            x: Math.random() * window.innerWidth,
-            y: -200,
-            scale: [0.5, 1.2, 0.5],
-          }}
-          transition={{
-            duration: Math.random() * 25 + 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: Math.random() * 12,
-          }}
-        />
-      ))}
-    </div>
-  )
+      ))}        {/* Particules lumineuses */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`light-${i}`}
+            className="absolute w-3 h-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-sm"
+            initial={{
+              x: Math.random() * windowSize.width,
+              y: windowSize.height + 200,
+              scale: 0.5,
+            }}
+            animate={{
+              x: Math.random() * windowSize.width,
+              y: -200,
+              scale: [0.5, 1.2, 0.5],
+            }}
+            transition={{
+              duration: Math.random() * 25 + 20,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 12,
+            }}
+          />
+        ))}
+      </div>
+    )
+  }
 
   const quickQuestions = [
     "Résume-moi ce contrat", // → SUMMARY*"Analyse personnalisée selon mon profil", 
@@ -551,6 +572,18 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         setIsLoading(false)
       }
     }
+  }
+
+  // Afficher un loader pendant l'hydratation côté client
+  if (!isClient) {
+    return (
+      <main className="min-h-screen relative bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-cyan-900/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Chargement...</p>
+        </div>
+      </main>
+    )
   }
 
   return (
