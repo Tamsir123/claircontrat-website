@@ -113,7 +113,7 @@ export default function HistoriquePage() {
               </p>
             </motion.div>
 
-            {/* Barre de recherche et filtres */}
+            {/* Barre de recherche et filtre */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
