@@ -365,7 +365,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         case 'contract_analysis':
           // 📋 SUMMARY: Analyser un nouveau contrat OU demande explicite de résumé
           console.log('📋 Résumé de contrat → Utilisation du SUMMARY')
-          response = await axios.post('http://localhost:4600/contract/summary', {
+          response = await axios.post('https://contract-backend-1riz.onrender.com/contract/summary', {
             contractText: currentMessage
           })
           aiResponse = response.data.summary
@@ -378,7 +378,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
           if (!contractText || !userPreference) {
             aiResponse = "⚠️ Pour une analyse personnalisée, j'ai besoin d'un contrat et que vous sélectionniez votre profil dans la barre latérale."
           } else {
-            response = await axios.post('http://localhost:4600/contract/risk-alert', {
+            response = await axios.post('https://contract-backend-1riz.onrender.com/contract/risk-alert', {
               contractText,
               userPreference,
               followUpQuestion: currentMessage
@@ -395,7 +395,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
             content: msg.content
           }))
           
-          response = await axios.post('http://localhost:4600/ai/chat', {
+          response = await axios.post('https://contract-backend-1riz.onrender.com/ai/chat', {
             message: currentMessage,
             conversationHistory: chatHistoryForQuestion,
             contractContext: contractText || null,
@@ -416,7 +416,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
             content: msg.content
           }))
 
-          response = await axios.post('http://localhost:4600/ai/chat', {
+          response = await axios.post('https://contract-backend-1riz.onrender.com/ai/chat', {
             message: currentMessage,
             conversationHistory: conversationHistory,
             contractContext: contractText || null,
@@ -512,7 +512,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         }))
 
         // Utiliser le chat intelligent avec messageType = 'risk_alert'
-        const response = await axios.post('http://localhost:4600/ai/chat', {
+        const response = await axios.post('https://contract-backend-1riz.onrender.com/ai/chat', {
           message: `Analyse personnalisée selon mon profil ${selectedProfile}`,
           conversationHistory: conversationHistory,
           contractContext: contractText,

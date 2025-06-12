@@ -454,7 +454,7 @@ export default function InscriptionPage() {
       console.log("Sending registration data:", registrationData)
 
       // Make API call to backend
-      const response = await axios.post("http://localhost:4600/api/inscription", registrationData, {
+      const response = await axios.post("https://contract-backend-1riz.onrender.com/api/inscription", registrationData, {
         headers: {
           "Content-Type": "application/json",
         },
