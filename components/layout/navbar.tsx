@@ -34,13 +34,13 @@ export default function Navigation() {
             
             <a 
               href="/inscription" 
-              className="flex items-center justify-center w-9 h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200 hover:scale-105"
+              className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200 hover:scale-105"
               title="Connexion / Inscription"
             >
-              <IconUser className="w-4 h-4 lg:w-5 lg:h-5 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
+              <IconUser className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
             </a>
             
-            <NavbarButton variant="primary" href="/chat" className="px-4 py-2 lg:px-5 lg:py-2.5 xl:px-6 xl:py-3">
+            <NavbarButton variant="primary" href="/chat" className="px-3 py-1.5 lg:px-4 lg:py-2 xl:px-5 xl:py-2.5">
               Analyser un contrat
             </NavbarButton>
           </div>

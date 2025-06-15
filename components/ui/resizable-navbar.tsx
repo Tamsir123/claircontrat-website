@@ -91,7 +91,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         maxWidth: "1800px",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 lg:flex lg:px-6 lg:py-3 xl:px-8 xl:py-4",
+        "relative z-[60] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-1.5 lg:flex lg:px-6 lg:py-2 xl:px-8 xl:py-2.5",
         visible && "bg-white/80 dark:bg-navy-900/80 border border-brand-200/20 dark:border-brand-800/20",
         className,
       )}
@@ -116,7 +116,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-2 py-1.5 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors lg:px-3 lg:py-2 xl:px-4 xl:py-2 whitespace-nowrap"
+          className="relative px-2 py-1 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 transition-colors lg:px-3 lg:py-1.5 xl:px-4 xl:py-1.5 whitespace-nowrap"
           key={`link-${idx}`}
           href={item.link}
         >
@@ -153,7 +153,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 50,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-0 py-1.5 lg:hidden",
         visible && "bg-white/80 dark:bg-navy-900/80 border border-brand-200/20 dark:border-brand-800/20",
         className,
       )}
@@ -176,7 +176,7 @@ export const MobileNavMenu = ({ children, className, isOpen, onClose }: MobileNa
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={cn(
-            "absolute inset-x-0 top-14 z-50 flex w-full flex-col items-start justify-start gap-3 rounded-lg bg-white/95 backdrop-blur-md px-3 py-6 shadow-xl border border-brand-200/20 dark:bg-navy-900/95 dark:border-brand-800/20",
+            "absolute inset-x-0 top-12 z-50 flex w-full flex-col items-start justify-start gap-3 rounded-lg bg-white/95 backdrop-blur-md px-3 py-4 shadow-xl border border-brand-200/20 dark:bg-navy-900/95 dark:border-brand-800/20",
             className,
           )}
         >
@@ -225,7 +225,7 @@ export const NavbarButton = ({
   variant?: "primary" | "secondary" | "dark" | "gradient"
 } & (React.ComponentPropsWithoutRef<"a"> | React.ComponentPropsWithoutRef<"button">)) => {
   const baseStyles =
-    "px-4 py-2 rounded-full font-semibold text-xs relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center lg:px-5 lg:py-2.5 lg:text-sm xl:px-6 xl:py-3 xl:text-base whitespace-nowrap"
+    "px-3 py-1.5 rounded-full font-semibold text-xs relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center lg:px-4 lg:py-2 lg:text-sm xl:px-5 xl:py-2.5 xl:text-base whitespace-nowrap"
 
   const variantStyles = {
     primary:

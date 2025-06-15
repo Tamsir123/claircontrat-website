@@ -15,7 +15,7 @@ export default function Footer() {
 
       <div className="relative z-10">
         {/* Section principale */}
-        <div className="container mx-auto px-6 lg:px-8 py-16">
+        <div className="container mx-auto px-6 lg:px-8 py-8">
           <div className="max-w-6xl mx-auto">
             
             {/* Header du footer */}
@@ -24,9 +24,9 @@ export default function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="text-center mb-8"
             >
-              <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -34,16 +34,16 @@ export default function Footer() {
                   <img 
                     src="/logo.jpeg" 
                     alt="Consent Radar" 
-                    width={48} 
-                    height={48} 
-                    className="rounded-xl shadow-lg"
+                    width={40} 
+                    height={40} 
+                    className="rounded-lg shadow-lg"
                   />
                 </motion.div>
-                <span className="font-bold text-2xl bg-gradient-to-r from-brand-400 to-navy-300 bg-clip-text text-transparent">
+                <span className="font-bold text-xl bg-gradient-to-r from-brand-400 to-navy-300 bg-clip-text text-transparent">
                   Consent Radar
                 </span>
               </div>
-              <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
                 L'intelligence artificielle qui démystifie vos contrats numériques 
                 <span className="text-brand-400 font-medium"> pour vous protéger des clauses cachées.</span>
               </p>
@@ -55,7 +55,7 @@ export default function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="flex flex-wrap justify-center gap-8 mb-16"
+              className="flex flex-wrap justify-center gap-6 mb-8"
             >
               {[
                 { name: "Analyser un contrat", href: "/chat" },
@@ -86,7 +86,7 @@ export default function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true }}
-              className="flex justify-center gap-6 mb-12"
+              className="flex justify-center gap-4 mb-6"
             >
               {[
                 { icon: Twitter, href: "#", label: "Twitter" },
@@ -99,10 +99,10 @@ export default function Footer() {
                   href={social.href}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-12 h-12 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl flex items-center justify-center text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 hover:border-brand-500/30 transition-all duration-200"
+                  className="w-10 h-10 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg flex items-center justify-center text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 hover:border-brand-500/30 transition-all duration-200"
                   aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-4 h-4" />
                 </motion.a>
               ))}
             </motion.div>
@@ -118,7 +118,7 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
           viewport={{ once: true }}
-          className="container mx-auto px-6 lg:px-8 py-8"
+          className="container mx-auto px-6 lg:px-8 py-4"
         >
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-400">
@@ -129,7 +129,7 @@ export default function Footer() {
               
               <div className="flex items-center gap-1 text-xs">
                 <span>Designé par</span>
-                <span className="text-brand-400 font-medium">Tamsir</span>
+                <span className="text-brand-400 font-medium">Tamsir et Flora</span>
                 <span>pour protéger vos droits numériques</span>
               </div>
             </div>
