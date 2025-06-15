@@ -1,0 +1,499 @@
+/* ==========================================
+   STYLES MODERNES POUR L'INTERFACE DE CHAT
+   ========================================== */
+
+/* Animations de base */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes breathing {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+  }
+}
+
+@keyframes pulse-ring {
+  0% { 
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes neon-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.8);
+  }
+}
+
+@keyframes gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* Classes d'animation */
+.float-animation {
+  animation: float 2s ease-in-out infinite;
+}
+
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.shine-effect:hover::before {
+  left: 100%;
+}
+
+.avatar-breathing {
+  animation: breathing 3s ease-in-out infinite;
+}
+
+.neon-border {
+  transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.neon-glow {
+  animation: neon-glow 2s ease-in-out infinite;
+}
+
+.animated-gradient {
+  background-size: 400% 400%;
+  animation: gradient-animation 3s ease infinite;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.status-pulse {
+  animation: pulse-ring 2s infinite;
+}
+
+/* Boutons morphing */
+.morph-button {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.morph-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(110%);
+}
+
+/* Messages et bulles de chat */
+.message-bubble {
+  position: relative;
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  transition: all 0.3s ease;
+}
+
+.message-bubble:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.message-reactions {
+  transition: all 0.3s ease;
+}
+
+/* Indicateurs de type de message */
+.message-indicator {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  z-index: 10;
+}
+
+.message-indicator.conversation {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.message-indicator.assistant {
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+}
+
+.message-indicator.analysis {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+
+.message-indicator.alert {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.message-indicator.extension {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+/* Animation de typing dots */
+.typing-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #06B6D4;
+  animation: typing-dot 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Scrollbar personnalisée */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glassmorphism effects */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Effets de particules */
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Thème sombre amélioré */
+@media (prefers-color-scheme: dark) {
+  .message-bubble {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-effect {
+    background: rgba(15, 23, 42, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .message-bubble {
+    border-radius: 20px;
+    padding: 16px;
+  }
+  
+  .message-indicator {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+  
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Animations d'apparition en cascade */
+.cascade-animation {
+  animation: cascadeIn 0.6s ease-out forwards;
+}
+
+@keyframes cascadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Effet de hover sur les cartes */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+/* Boutons avec effet de ripple */
+.ripple-button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.ripple-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Text shimmer effect */
+.text-shimmer {
+  background: linear-gradient(90deg, #374151, #06B6D4, #374151);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2s infinite;
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #374151 25%, transparent 37%, #374151 63%);
+  background-size: 400% 100%;
+}
+
+/* Micro-interactions */
+.micro-bounce {
+  transition: transform 0.2s ease;
+}
+
+.micro-bounce:hover {
+  transform: scale(1.05);
+}
+
+.micro-bounce:active {
+  transform: scale(0.95);
+}
+
+/* Focus states améliorés */
+.focus-ring {
+  transition: all 0.2s ease;
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+}
+
+/* États d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Indicateurs visuels d'état */
+.state-indicator {
+  position: relative;
+}
+
+.state-indicator::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.state-indicator.online::after {
+  background: #10B981;
+  animation: pulse-ring 2s infinite;
+}
+
+.state-indicator.loading::after {
+  background: #F59E0B;
+  animation: spin 1s linear infinite;
+}
+
+.state-indicator.error::after {
+  background: #EF4444;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tooltips modernisés */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::before,
+.tooltip::after {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.tooltip:hover::before,
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/* Effets de backdrop */
+.backdrop-blur-strong {
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Gradients personnalisés */
+.gradient-text {
+  background: linear-gradient(135deg, #06B6D4, #3B82F6, #8B5CF6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-animation 3s ease infinite;
+}
+
+/* Ombres modernes */
+.shadow-modern {
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.05),
+    0 10px 15px rgba(0,0,0,0.1),
+    0 20px 25px rgba(0,0,0,0.1);
+}
+
+.shadow-modern-hover:hover {
+  box-shadow: 
+    0 4px 6px rgba(0,0,0,0.05),
+    0 20px 25px rgba(0,0,0,0.1),
+    0 30px 35px rgba(0,0,0,0.1);
+}
+
+/* États de chargement */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Grid layouts responsifs */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* États interactifs avancés */
+.interactive-element {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.interactive-element:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Effets de transition fluides */
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Personnalisation pour le thème sombre */
+.dark .text-shimmer {
+  background: linear-gradient(90deg, #9CA3AF, #06B6D4, #9CA3AF);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
