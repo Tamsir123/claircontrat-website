@@ -10,7 +10,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar"
-import { IconUser } from "@tabler/icons-react"
+import { IconSettings, IconUserCircle } from "@tabler/icons-react"
 import { useState } from "react"
 
 export default function Navigation() {
@@ -37,7 +37,7 @@ export default function Navigation() {
               className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200 hover:scale-105"
               title="Connexion / Inscription"
             >
-              <IconUser className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
+              <IconUserCircle className="w-4 h-4 lg:w-4 lg:h-4 xl:w-5 xl:h-5 text-brand-600 dark:text-brand-400" />
             </a>
             
             <NavbarButton variant="primary" href="/chat" className="px-3 py-1.5 lg:px-4 lg:py-2 xl:px-5 xl:py-2.5">
@@ -70,7 +70,7 @@ export default function Navigation() {
                 className="flex items-center justify-center w-11 h-11 rounded-full bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/40 transition-all duration-200"
                 title="Connexion / Inscription"
               >
-                <IconUser className="w-5 h-5 text-brand-600 dark:text-brand-400" />
+                <IconUserCircle className="w-5 h-5 text-brand-600 dark:text-brand-400" />
               </a>
               <NavbarButton 
                 onClick={() => setIsMobileMenuOpen(false)} 
