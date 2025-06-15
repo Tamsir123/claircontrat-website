@@ -608,149 +608,24 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
       <section className="py-6 bg-white dark:bg-slate-900 pt-20">
         <div className="container mx-auto px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-8"
-            >
-              {/* Hero principal avec effet glassmorphism */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, type: "spring", stiffness: 100 }}
-              >
-                {/* Container principal avec effet glass */}
-                <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-8 lg:p-12 shadow-2xl">
-                  {/* Effet de brillance animé */}
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                  
-                  {/* Icône principale avec effet holographique */}
-                  <motion.div
-                    className="mx-auto mb-8 relative"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="w-20 h-20 lg:w-24 lg:h-24 mx-auto relative">
-                      {/* Halo lumineux */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                      
-                      {/* Icône principale */}
-                      <div className="relative w-20 h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/30 dark:border-slate-700/30">
-                        <Brain className="w-10 h-10 lg:w-12 lg:h-12 text-white" />
-                        
-                        {/* Orbites animées autour de l'icône */}
-                        {[...Array(3)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="absolute border border-cyan-300/50 rounded-full"
-                            style={{
-                              width: 100 + i * 16,
-                              height: 100 + i * 16,
-                            }}
-                            animate={{ rotate: 360 }}
-                            transition={{
-                              duration: 10 + i * 5,
-                              repeat: Infinity,
-                              ease: "linear",
-                            }}
-                          >
-                            <div className="absolute top-0 left-1/2 w-1.5 h-1.5 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1"></div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Titre avec effet de typing */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-center"
-                  >
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      <motion.div
-                        className="w-3 h-3 bg-green-500 rounded-full"
-                        animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                        Interface de Chat Active
-                      </span>
-                    </div>
-                    
-                    <h1 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-800 to-cyan-800 dark:from-white dark:via-blue-200 dark:to-cyan-200 bg-clip-text text-transparent">
-                      Chat avec l'IA
-                    </h1>
-                    
-                    <div className="relative mb-8">
-                      <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-medium max-w-3xl mx-auto">
-                        Posez vos questions directement à notre IA spécialisée dans l'analyse de contrats numériques
-                      </p>
-                      <motion.div
-                        className="absolute -bottom-2 left-1/2 w-32 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full"
-                        initial={{ width: 0, x: "-50%" }}
-                        animate={{ width: 128, x: "-50%" }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Badges de capacités avec animations */}
-                  <motion.div
-                    className="flex items-center justify-center gap-4 lg:gap-6 flex-wrap"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                  >
-                    {[
-                      { icon: Brain, text: "IA Avancée", color: "from-blue-500 to-cyan-500" },
-                      { icon: FileText, text: "Analyse Rapide", color: "from-green-500 to-emerald-500" },
-                      { icon: AlertCircle, text: "Alertes Personnalisées", color: "from-purple-500 to-pink-500" }
-                    ].map((badge, index) => (
-                      <motion.div
-                        key={index}
-                        className={`bg-gradient-to-r ${badge.color} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/20 flex items-center gap-2`}
-                        initial={{ scale: 0, rotate: -10 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: 1 + index * 0.1, type: "spring" }}
-                        whileHover={{ scale: 1.05, y: -2 }}
-                      >
-                        <badge.icon className="w-4 h-4" />
-                        {badge.text}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </div>
-              </motion.div>
-            </motion.div>
-
+            
             <div className="flex h-[750px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden">
               {/* Sidebar moderne style ChatGPT - Collée au chat */}
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="w-80 flex-shrink-0 border-r border-slate-200 dark:border-slate-700"
-              >
+              <div className="w-80 flex-shrink-0 border-r border-slate-200 dark:border-slate-700">
                 {/* Container principal de la sidebar */}
                 <div className="h-full bg-slate-50 dark:bg-slate-800/50 flex flex-col">
                   
                   {/* Header de la sidebar */}
                   <div className="p-3 border-b border-slate-200/30 dark:border-slate-700/30">
-                    <motion.button
+                    <button
                       onClick={clearConversation}
                       className="w-full flex items-center gap-3 p-3 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-200 group"
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
                     >
                       <div className="w-5 h-5 flex items-center justify-center">
                         <Plus className="w-4 h-4" />
                       </div>
                       <span className="font-medium text-sm">New chat</span>
-                    </motion.button>
+                    </button>
                   </div>
 
                   {/* Zone de contenu scrollable */}
@@ -917,7 +792,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                     </motion.button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Interface de chat ultra-moderne - Collée à la sidebar */}
               <motion.div
@@ -1768,45 +1643,6 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         </motion.button>
       </motion.div>
 
-      {/* Notification contextuelle pour les nouveaux utilisateurs */}
-      {messages.length <= 1 && (
-        <motion.div
-          className="fixed top-24 right-6 z-40 max-w-sm"
-          initial={{ opacity: 0, x: 100, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ delay: 3, type: "spring", stiffness: 200 }}
-          exit={{ opacity: 0, x: 100, scale: 0.8 }}
-        >
-          <div className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 border border-cyan-200/50 dark:border-cyan-800/20 rounded-2xl p-4 shadow-xl backdrop-blur-xl">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-sm">👋</span>
-              </div>
-              <div className="min-w-0">
-                <h4 className="font-semibold text-cyan-800 dark:text-cyan-300 text-sm mb-1">
-                  Bienvenue dans Chat IA !
-                </h4>
-                <p className="text-xs text-cyan-700 dark:text-cyan-400">
-                  Collez un contrat ou posez une question pour commencer. 
-                  Cliquez sur 💡 pour plus d'aide.
-                </p>
-              </div>
-              <motion.button
-                onClick={() => {
-                  const notification = document.querySelector('[data-notification]')
-                  if (notification) notification.remove()
-                }}
-                className="text-cyan-600 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-200 p-1"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <span className="sr-only">Fermer</span>
-                ✕
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-      )}
     </main>
   )
 }

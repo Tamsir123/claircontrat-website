@@ -1,88 +1,140 @@
+"use client"
+import { motion } from "framer-motion"
+import { Github, Twitter, Linkedin, Mail } from "lucide-react"
+
 export default function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <footer className="bg-navy-900 dark:bg-navy-950 text-white py-16">
-      <div className="container mx-auto px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <img src="/logo.jpeg" alt="ClairContrat" width={40} height={40} className="rounded-lg" />
-                <span className="font-bold text-xl">ClairContrat</span>
+    <footer className="relative bg-gradient-to-br from-slate-900 via-navy-900 to-navy-950 text-white overflow-hidden">
+      {/* Effet de fond subtil */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-brand-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-navy-500 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10">
+        {/* Section principale */}
+        <div className="container mx-auto px-6 lg:px-8 py-16">
+          <div className="max-w-6xl mx-auto">
+            
+            {/* Header du footer */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img 
+                    src="/logo.jpeg" 
+                    alt="Consent Radar" 
+                    width={48} 
+                    height={48} 
+                    className="rounded-xl shadow-lg"
+                  />
+                </motion.div>
+                <span className="font-bold text-2xl bg-gradient-to-r from-brand-400 to-navy-300 bg-clip-text text-transparent">
+                  Consent Radar
+                </span>
               </div>
-              <p className="text-slate-400 leading-relaxed">
-                L'intelligence artificielle qui démystifie vos contrats numériques pour vous protéger des clauses
-                cachées.
+              <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                L'intelligence artificielle qui démystifie vos contrats numériques 
+                <span className="text-brand-400 font-medium"> pour vous protéger des clauses cachées.</span>
               </p>
-            </div>
+            </motion.div>
 
-            <div>
-              <h3 className="font-semibold mb-4">Produit</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="/chat" className="hover:text-brand-400 transition-colors">
-                    Analyser un contrat
-                  </a>
-                </li>
-                <li>
-                  <a href="/resumes-populaires" className="hover:text-brand-400 transition-colors">
-                    Résumés populaires
-                  </a>
-                </li>
-                <li>
-                  <a href="/tarifs" className="hover:text-brand-400 transition-colors">
-                    Tarifs
-                  </a>
-                </li>
-              </ul>
-            </div>
+            {/* Navigation simplifiée */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="flex flex-wrap justify-center gap-8 mb-16"
+            >
+              {[
+                { name: "Analyser un contrat", href: "/chat" },
+                { name: "Résumés populaires", href: "/resumes-populaires" },
+                { name: "Mon historique", href: "/historique" },
+                { name: "À propos", href: "/a-propos" },
+                { name: "Confidentialité", href: "/confidentialite" },
+                { name: "Contact", href: "/contact" }
+              ].map((item, index) => (
+                <motion.a
+                  key={item.name}
+                  href={item.href}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="text-slate-400 hover:text-brand-400 transition-all duration-200 font-medium"
+                >
+                  {item.name}
+                </motion.a>
+              ))}
+            </motion.div>
 
-            <div>
-              <h3 className="font-semibold mb-4">Ressources</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="/blog" className="hover:text-brand-400 transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="/guide" className="hover:text-brand-400 transition-colors">
-                    Guide d'utilisation
-                  </a>
-                </li>
-                <li>
-                  <a href="/support" className="hover:text-brand-400 transition-colors">
-                    Support
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">Entreprise</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="/a-propos" className="hover:text-brand-400 transition-colors">
-                    À propos
-                  </a>
-                </li>
-                <li>
-                  <a href="/confidentialite" className="hover:text-brand-400 transition-colors">
-                    Confidentialité
-                  </a>
-                </li>
-                <li>
-                  <a href="/contact" className="hover:text-brand-400 transition-colors">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-navy-800 mt-12 pt-8 text-center text-slate-400">
-            <p>&copy; 2024 ClairContrat. Tous droits réservés. Protégez vos droits numériques.</p>
+            {/* Réseaux sociaux */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="flex justify-center gap-6 mb-12"
+            >
+              {[
+                { icon: Twitter, href: "#", label: "Twitter" },
+                { icon: Linkedin, href: "#", label: "LinkedIn" },
+                { icon: Github, href: "#", label: "GitHub" },
+                { icon: Mail, href: "mailto:contact@claircontrat.fr", label: "Email" }
+              ].map((social, index) => (
+                <motion.a
+                  key={social.label}
+                  href={social.href}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-12 h-12 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl flex items-center justify-center text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 hover:border-brand-500/30 transition-all duration-200"
+                  aria-label={social.label}
+                >
+                  <social.icon className="w-5 h-5" />
+                </motion.a>
+              ))}
+            </motion.div>
           </div>
         </div>
+
+        {/* Ligne de séparation élégante */}
+        <div className="border-t border-slate-800/50"></div>
+
+        {/* Copyright minimaliste */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          viewport={{ once: true }}
+          className="container mx-auto px-6 lg:px-8 py-8"
+        >
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-400">
+              <div className="flex items-center gap-2">
+                <span>&copy; {currentYear} Consent Radar.</span>
+                <span>Tous droits réservés.</span>
+              </div>
+              
+              <div className="flex items-center gap-1 text-xs">
+                <span>Designé par</span>
+                <span className="text-brand-400 font-medium">Tamsir</span>
+                <span>pour protéger vos droits numériques</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </footer>
   )
