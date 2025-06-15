@@ -546,57 +546,109 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
   }
 
   return (
-    <main className="min-h-screen relative">
+    <main className="min-h-screen bg-white dark:bg-slate-900">
       <FloatingParticles />
 
-      {/* Barre de navigation simplifiée en haut */}
+      {/* En-tête moderne et élégant */}
       <motion.div 
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-slate-700/20"
+        className="border-b border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto px-6 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo/Retour */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo et titre */}
             <div className="flex items-center gap-4">
-              <motion.button
-                onClick={() => window.location.href = '/'}
-                className="flex items-center gap-2 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors font-medium"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <motion.div
+                className="flex items-center gap-3"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Retour à l'accueil</span>
-                <span className="sm:hidden">Accueil</span>
-              </motion.button>
-              
-              <div className="w-px h-6 bg-slate-300 dark:bg-slate-600"></div>
-              
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                <span className="font-bold text-slate-800 dark:text-white">Chat IA</span>
-              </div>
+                <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+                    Consent Radar
+                  </h1>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Analyseur de contrats IA
+                  </p>
+                </div>
+              </motion.div>
             </div>
 
-            {/* Actions rapides */}
-            <div className="flex items-center gap-2">
+            {/* Navigation centrale */}
+            <div className="hidden md:flex items-center gap-6">
+              <nav className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+                <motion.button
+                  className="px-4 py-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded-md shadow-sm font-medium text-sm"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Chat IA
+                </motion.button>
+                <button
+                  onClick={() => window.location.href = '/historique'}
+                  className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md font-medium text-sm transition-colors"
+                >
+                  Historique
+                </button>
+                <button
+                  onClick={() => window.location.href = '/resumes-populaires'}
+                  className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md font-medium text-sm transition-colors"
+                >
+                  Résumés
+                </button>
+              </nav>
+            </div>
+
+            {/* Actions à droite */}
+            <div className="flex items-center gap-3">
+              {/* Indicateur de statut */}
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/30 rounded-lg">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
+                  IA Active
+                </span>
+              </div>
+
+              {/* Bouton retour accueil */}
               <motion.button
-                onClick={() => window.location.href = '/historique'}
-                className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-xl text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-xs font-medium"
+                onClick={() => window.location.href = '/'}
+                className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                title="Retour à l'accueil"
               >
-                <FileText className="w-3 h-3" />
-                Historique
+                <Home className="w-5 h-5" />
               </motion.button>
-              
+
+              {/* Bouton profil */}
               <motion.button
                 onClick={() => window.location.href = '/profil'}
-                className="flex items-center gap-2 px-3 py-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-xl text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-xs font-medium"
+                className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                title="Mon profil"
               >
+                <User className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Interface de chat pleine page */}
+      <div className="h-[calc(100vh-64px)]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="h-full"
+        >
                 <Settings className="w-3 h-3" />
                 <span className="hidden sm:inline">Profil</span>
               </motion.button>
@@ -614,120 +666,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
               transition={{ duration: 0.8 }}
               className="text-center mb-8"
             >
-              {/* Hero principal avec effet glassmorphism */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, type: "spring", stiffness: 100 }}
-              >
-                {/* Container principal avec effet glass */}
-                <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-8 lg:p-12 shadow-2xl">
-                  {/* Effet de brillance animé */}
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                  
-                  {/* Icône principale avec effet holographique */}
-                  <motion.div
-                    className="mx-auto mb-8 relative"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="w-20 h-20 lg:w-24 lg:h-24 mx-auto relative">
-                      {/* Halo lumineux */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                      
-                      {/* Icône principale */}
-                      <div className="relative w-20 h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/30 dark:border-slate-700/30">
-                        <Brain className="w-10 h-10 lg:w-12 lg:h-12 text-white" />
-                        
-                        {/* Orbites animées autour de l'icône */}
-                        {[...Array(3)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="absolute border border-cyan-300/50 rounded-full"
-                            style={{
-                              width: 100 + i * 16,
-                              height: 100 + i * 16,
-                            }}
-                            animate={{ rotate: 360 }}
-                            transition={{
-                              duration: 10 + i * 5,
-                              repeat: Infinity,
-                              ease: "linear",
-                            }}
-                          >
-                            <div className="absolute top-0 left-1/2 w-1.5 h-1.5 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1"></div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Titre avec effet de typing */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-center"
-                  >
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      <motion.div
-                        className="w-3 h-3 bg-green-500 rounded-full"
-                        animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                      <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                        Interface de Chat Active
-                      </span>
-                    </div>
-                    
-                    <h1 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-800 to-cyan-800 dark:from-white dark:via-blue-200 dark:to-cyan-200 bg-clip-text text-transparent">
-                      Chat avec l'IA
-                    </h1>
-                    
-                    <div className="relative mb-8">
-                      <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-medium max-w-3xl mx-auto">
-                        Posez vos questions directement à notre IA spécialisée dans l'analyse de contrats numériques
-                      </p>
-                      <motion.div
-                        className="absolute -bottom-2 left-1/2 w-32 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full"
-                        initial={{ width: 0, x: "-50%" }}
-                        animate={{ width: 128, x: "-50%" }}
-                        transition={{ delay: 1, duration: 0.8 }}
-                      />
-                    </div>
-                  </motion.div>
-
-                  {/* Badges de capacités avec animations */}
-                  <motion.div
-                    className="flex items-center justify-center gap-4 lg:gap-6 flex-wrap"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                  >
-                    {[
-                      { icon: Brain, text: "IA Avancée", color: "from-blue-500 to-cyan-500" },
-                      { icon: FileText, text: "Analyse Rapide", color: "from-green-500 to-emerald-500" },
-                      { icon: AlertCircle, text: "Alertes Personnalisées", color: "from-purple-500 to-pink-500" }
-                    ].map((badge, index) => (
-                      <motion.div
-                        key={index}
-                        className={`bg-gradient-to-r ${badge.color} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/20 flex items-center gap-2`}
-                        initial={{ scale: 0, rotate: -10 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ delay: 1 + index * 0.1, type: "spring" }}
-                        whileHover={{ scale: 1.05, y: -2 }}
-                      >
-                        <badge.icon className="w-4 h-4" />
-                        {badge.text}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            <div className="flex h-[750px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden">
+            <div className="flex h-full bg-white dark:bg-slate-900">
               {/* Sidebar moderne style ChatGPT - Collée au chat */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -929,170 +868,30 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                 {/* Container principal sans bordure supplémentaire */}
                 <div className="h-full flex flex-col">
                   
-                  {/* Header moderne et élégant */}
-                  <div className="relative overflow-hidden bg-gradient-to-r from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 border-b border-slate-200/50 dark:border-slate-700/50">
-                    {/* Effet de particules subtiles en arrière-plan */}
-                    <div className="absolute inset-0 opacity-30">
-                      {[...Array(6)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute w-1 h-1 bg-cyan-400/60 rounded-full"
-                          initial={{
-                            x: Math.random() * 400,
-                            y: Math.random() * 80,
-                          }}
-                          animate={{
-                            x: Math.random() * 400,
-                            y: Math.random() * 80,
-                          }}
-                          transition={{
-                            duration: Math.random() * 10 + 8,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="relative p-6">
-                      <div className="flex items-center justify-between">
-                        {/* Section principale avec avatar et infos */}
-                        <div className="flex items-center gap-4">
-                          {/* Avatar IA avec effet lumineux */}
-                          <motion.div 
-                            className="relative"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-75 animate-pulse"></div>
-                            <div className="relative w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-800">
-                              <Brain className="w-6 h-6 text-white" />
-                              {/* Indicateur de statut animé */}
-                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center">
-                                <motion.div
-                                  className="w-2 h-2 bg-white rounded-full"
-                                  animate={{ scale: [1, 1.2, 1] }}
-                                  transition={{ duration: 2, repeat: Infinity }}
-                                />
-                              </div>
-                            </div>
-                          </motion.div>
-                          
-                          <div className="space-y-1">
-                            <motion.h1 
-                              className="text-xl font-bold bg-gradient-to-r from-slate-800 via-blue-800 to-cyan-800 dark:from-white dark:via-blue-200 dark:to-cyan-200 bg-clip-text text-transparent"
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.2 }}
-                            >
-                              Consent Radar AI
-                            </motion.h1>
-                            <motion.div 
-                              className="flex items-center gap-3 text-sm"
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.4 }}
-                            >
-                              <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="font-medium">IA Active</span>
-                              </div>
-                              <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
-                              <span className="text-slate-600 dark:text-slate-400">
-                                Spécialisé en analyse de contrats
-                              </span>
-                            </motion.div>
-                          </div>
-                        </div>
-                        
-                        {/* Section droite avec statistiques */}
-                        <motion.div 
-                          className="flex items-center gap-4"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.6 }}
-                        >
-                          {/* Carte de session */}
-                          <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-white/50 dark:border-slate-700/50 rounded-xl p-3 shadow-sm">
-                            <div className="flex items-center gap-3">
-                              <div className="text-center">
-                                <div className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
-                                  {messages.length}
-                                </div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">Messages</div>
-                              </div>
-                              
-                              {contractText && (
-                                <>
-                                  <div className="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
-                                  <div className="text-center">
-                                    <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                      {Math.round(contractText.length / 1000)}K
-                                    </div>
-                                    <div className="text-xs text-slate-500 dark:text-slate-400">Caractères</div>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Indicateurs de fonctionnalités */}
-                          <div className="flex items-center gap-2">
-                            {contractText && (
-                              <motion.div 
-                                className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-3 py-1.5 rounded-full text-xs font-medium border border-emerald-200 dark:border-emerald-800"
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.8 }}
-                              >
-                                <div className="flex items-center gap-1.5">
-                                  <FileText className="w-3 h-3" />
-                                  Document chargé
-                                </div>
-                              </motion.div>
-                            )}
-                            
-                            {userPreference && (
-                              <motion.div 
-                                className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-full text-xs font-medium border border-purple-200 dark:border-purple-800"
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 1 }}
-                              >
-                                <div className="flex items-center gap-1.5">
-                                  <User className="w-3 h-3" />
-                                  Profil actif
-                                </div>
-                              </motion.div>
-                            )}
-                          </div>
-                        </motion.div>
+                  {/* Header épuré style ChatGPT */}
+                  <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+                    <div className="flex items-center gap-3">
+                      {/* Avatar IA simple */}
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                        <Brain className="w-4 h-4 text-white" />
                       </div>
-
-                      {/* Barre de progression ou informations contextuelles */}
-                      {isLoading && (
-                        <motion.div 
-                          className="mt-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-lg p-3 border border-white/50 dark:border-slate-700/50"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                        >
-                          <div className="flex items-center gap-3">
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                              className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full"
-                            />
-                            <div>
-                              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                IA en cours d'analyse...
-                              </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400">
-                                Génération d'une réponse personnalisée
-                              </p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
+                      
+                      <div>
+                        <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
+                          Consent Radar AI
+                        </h3>
+                        <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                          <span>Online</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Actions header */}
+                    <div className="flex items-center gap-2">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
+                        {messages.length} messages
+                      </div>
                     </div>
                   </div>
 
@@ -1101,266 +900,8 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                     ref={chatContainerRef}
                     className="flex-1 overflow-y-auto"
                   >
-                    {/* Section d'accueil ultra-moderne et magnifique */}
-                    {messages.length === 0 && (
-                      <div className="flex-1 flex items-center justify-center p-8 relative overflow-hidden">
-                        {/* Fond animé avec gradients et particules */}
-                        <div className="absolute inset-0">
-                          {/* Gradient de fond dynamique */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-cyan-50/30 to-slate-50/50 dark:from-slate-900/50 dark:via-blue-900/20 dark:to-slate-900/50"></div>
-                          
-                          {/* Cercles flottants animés */}
-                          {[...Array(12)].map((_, i) => (
-                            <motion.div
-                              key={i}
-                              className="absolute rounded-full bg-gradient-to-r from-cyan-400/20 to-blue-500/20 blur-xl"
-                              style={{
-                                width: Math.random() * 300 + 100,
-                                height: Math.random() * 300 + 100,
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                              }}
-                              animate={{
-                                x: [0, Math.random() * 100 - 50],
-                                y: [0, Math.random() * 100 - 50],
-                                scale: [1, 1.1, 1],
-                                opacity: [0.3, 0.6, 0.3],
-                              }}
-                              transition={{
-                                duration: Math.random() * 10 + 10,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: Math.random() * 5,
-                              }}
-                            />
-                          ))}
-                        </div>
-
-                        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-12">
-                          {/* Hero principal avec effet glassmorphism */}
-                          <motion.div
-                            className="relative"
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1, type: "spring", stiffness: 100 }}
-                          >
-                            {/* Container principal avec effet glass */}
-                            <div className="relative bg-white/40 dark:bg-slate-800/40 backdrop-blur-2xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-12 shadow-2xl">
-                              {/* Effet de brillance animé */}
-                              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                              
-                              {/* Icône principale avec effet holographique */}
-                              <motion.div
-                                className="mx-auto mb-8 relative"
-                                whileHover={{ scale: 1.1, rotate: 5 }}
-                                transition={{ type: "spring", stiffness: 300 }}
-                              >
-                                <div className="w-24 h-24 mx-auto relative">
-                                  {/* Halo lumineux */}
-                                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                                  
-                                  {/* Icône principale */}
-                                  <div className="relative w-24 h-24 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white/30 dark:border-slate-700/30">
-                                    <Brain className="w-12 h-12 text-white" />
-                                    
-                                    {/* Orbites animées autour de l'icône */}
-                                    {[...Array(3)].map((_, i) => (
-                                      <motion.div
-                                        key={i}
-                                        className="absolute border border-cyan-300/50 rounded-full"
-                                        style={{
-                                          width: 120 + i * 20,
-                                          height: 120 + i * 20,
-                                        }}
-                                        animate={{ rotate: 360 }}
-                                        transition={{
-                                          duration: 10 + i * 5,
-                                          repeat: Infinity,
-                                          ease: "linear",
-                                        }}
-                                      >
-                                        <div className="absolute top-0 left-1/2 w-2 h-2 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1"></div>
-                                      </motion.div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </motion.div>
-
-                              {/* Titre avec effet de typing */}
-                              <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5, duration: 0.8 }}
-                              >
-                                <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-800 to-cyan-800 dark:from-white dark:via-blue-200 dark:to-cyan-200 bg-clip-text text-transparent">
-                                  Consent Radar AI
-                                </h1>
-                                
-                                <div className="relative mb-8">
-                                  <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                                    Votre assistant IA intelligent pour l'analyse de contrats
-                                  </p>
-                                  <motion.div
-                                    className="absolute -bottom-2 left-1/2 w-32 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full"
-                                    initial={{ width: 0, x: "-50%" }}
-                                    animate={{ width: 128, x: "-50%" }}
-                                    transition={{ delay: 1, duration: 0.8 }}
-                                  />
-                                </div>
-                              </motion.div>
-
-                              {/* Badges de capacités avec animations */}
-                              <motion.div
-                                className="flex items-center justify-center gap-6 mb-10"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.8, duration: 0.6 }}
-                              >
-                                {[
-                                  { icon: "🚀", text: "IA Avancée", color: "from-blue-500 to-cyan-500" },
-                                  { icon: "⚡", text: "Analyse Rapide", color: "from-yellow-500 to-orange-500" },
-                                  { icon: "🎯", text: "Précision Expert", color: "from-purple-500 to-pink-500" },
-                                  { icon: "🔒", text: "Sécurisé", color: "from-green-500 to-emerald-500" }
-                                ].map((badge, index) => (
-                                  <motion.div
-                                    key={index}
-                                    className={`bg-gradient-to-r ${badge.color} text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg border border-white/20`}
-                                    initial={{ scale: 0, rotate: -10 }}
-                                    animate={{ scale: 1, rotate: 0 }}
-                                    transition={{ delay: 1 + index * 0.1, type: "spring" }}
-                                    whileHover={{ scale: 1.05, y: -2 }}
-                                  >
-                                    <span className="text-lg mr-2">{badge.icon}</span>
-                                    {badge.text}
-                                  </motion.div>
-                                ))}
-                              </motion.div>
-                            </div>
-                          </motion.div>
-
-                          {/* Section d'actions avec design moderne */}
-                          <motion.div
-                            className="space-y-8"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.2, duration: 0.8 }}
-                          >
-                            <div className="text-center">
-                              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
-                                Comment puis-je vous aider aujourd'hui ?
-                              </h2>
-                              <p className="text-slate-600 dark:text-slate-400">
-                                Choisissez une action pour commencer votre analyse
-                              </p>
-                            </div>
-
-                            {/* Cartes d'actions ultra-modernes */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                              {[
-                                {
-                                  icon: "📋",
-                                  title: "Analyser un Contrat",
-                                  description: "Upload ou collez votre contrat pour une analyse détaillée",
-                                  action: "Résume-moi ce contrat en détail avec tous les points importants",
-                                  gradient: "from-blue-500 to-cyan-500",
-                                  bgGradient: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20"
-                                },
-                                {
-                                  icon: "🎯",
-                                  title: "Analyse Personnalisée",
-                                  description: "Configurez votre profil pour une analyse sur-mesure",
-                                  action: "Je veux une analyse personnalisée selon mon profil utilisateur",
-                                  gradient: "from-purple-500 to-pink-500",
-                                  bgGradient: "from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20"
-                                },
-                                {
-                                  icon: "💡",
-                                  title: "Assistance & Conseils",
-                                  description: "Posez toutes vos questions sur les contrats numériques",
-                                  action: "Bonjour ! Peux-tu m'expliquer comment utiliser cet outil ?",
-                                  gradient: "from-green-500 to-emerald-500",
-                                  bgGradient: "from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20"
-                                }
-                              ].map((card, index) => (
-                                <motion.button
-                                  key={index}
-                                  onClick={() => setMessage(card.action)}
-                                  className={`relative group p-8 bg-gradient-to-br ${card.bgGradient} border-2 border-transparent hover:border-gradient-to-r hover:${card.gradient} rounded-2xl text-left transition-all duration-300 overflow-hidden`}
-                                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                                  transition={{ delay: 1.4 + index * 0.1, duration: 0.6 }}
-                                  whileHover={{ scale: 1.02, y: -5 }}
-                                  whileTap={{ scale: 0.98 }}
-                                >
-                                  {/* Effet de brillance au hover */}
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                  
-                                  {/* Icône avec animation */}
-                                  <motion.div
-                                    className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300"
-                                    whileHover={{ rotate: [0, -5, 5, 0] }}
-                                    transition={{ duration: 0.5 }}
-                                  >
-                                    {card.icon}
-                                  </motion.div>
-                                  
-                                  {/* Contenu */}
-                                  <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-slate-800 group-hover:to-blue-600 dark:group-hover:from-white dark:group-hover:to-cyan-300 transition-all duration-300">
-                                    {card.title}
-                                  </h3>
-                                  
-                                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                                    {card.description}
-                                  </p>
-                                  
-                                  {/* Flèche animée */}
-                                  <motion.div
-                                    className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                    initial={{ x: -10 }}
-                                    whileHover={{ x: 0 }}
-                                  >
-                                    <div className={`w-8 h-8 bg-gradient-to-r ${card.gradient} rounded-full flex items-center justify-center text-white shadow-lg`}>
-                                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                        <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                      </svg>
-                                    </div>
-                                  </motion.div>
-                                </motion.button>
-                              ))}
-                            </div>
-                          </motion.div>
-
-                          {/* Footer avec statistiques */}
-                          <motion.div
-                            className="border-t border-slate-200/50 dark:border-slate-700/50 pt-8"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 2, duration: 0.8 }}
-                          >
-                            <div className="flex items-center justify-center gap-8 text-sm text-slate-500 dark:text-slate-400">
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span>IA Active 24/7</span>
-                              </div>
-                              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
-                              <div className="flex items-center gap-2">
-                                <span>⚡</span>
-                                <span>Analyse en temps réel</span>
-                              </div>
-                              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
-                              <div className="flex items-center gap-2">
-                                <span>🔒</span>
-                                <span>Données sécurisées</span>
-                              </div>
-                            </div>
-                          </motion.div>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Container des messages avec padding optimal */}
-                    {messages.length > 0 && (
-                      <div className="p-4 space-y-6">
+                    <div className="p-4 space-y-6">
                       {messages.map((msg, index) => (
                         <motion.div 
                           key={index} 
@@ -1507,8 +1048,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                       
                       {/* Référence pour le scroll automatique */}
                       <div ref={messagesEndRef} />
-                      </div>
-                    )}
+                    </div>
                   </div>
 
                   {/* Zone de saisie style ChatGPT exact */}
