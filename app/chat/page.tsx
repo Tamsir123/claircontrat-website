@@ -27,7 +27,7 @@ export default function ChatPage() {
   }>>([
     {
       type: "ai",
-      content: "👋 Bonjour ! Je suis **Consent Radar AI**, votre assistant intelligent pour l'analyse de contrats.\n\nJe peux vous aider à :\n• 📄 Analyser vos contrats et CGU\n• ⚠️ Identifier les risques potentiels\n• 📋 Créer des résumés clairs\n• 💬 Répondre à vos questions\n\nComment puis-je vous aider aujourd'hui ?",
+      content: "👋 Bonjour ! Je suis votre assistant IA. Posez-moi vos questions ou collez un contrat à analyser.",
       timestamp: new Date().toLocaleTimeString(),
       indicator: "🤖 Assistant IA"
     },
@@ -1537,7 +1537,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
       </section>
 
       {/* Bouton d'aide flottant */}
-      <motion.div
+      {/* <motion.div
         className="fixed bottom-6 left-6 z-50"
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -1575,8 +1575,8 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
             boxShadow: "0 20px 40px rgba(16, 185, 129, 0.4)"
           }}
           whileTap={{ scale: 0.9 }}
-        >
-          <motion.div
+        > */}
+          {/* <motion.div
             animate={{ 
               y: [0, -2, 0],
               rotate: [0, 5, -5, 0]
@@ -1589,16 +1589,16 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
           >
             <span className="text-xl">💡</span>
           </motion.div>
-          
+           */}
           {/* Tooltip */}
-          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          {/* <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             <div className="bg-slate-800 dark:bg-white text-white dark:text-slate-800 text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
               Guide d'utilisation
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800 dark:border-t-white"></div>
             </div>
-          </div>
-        </motion.button>
-      </motion.div>
+          </div> */}
+        {/* </motion.button> */}
+      {/* </motion.div> */}
 
       {/* Bouton de raccourci pour nouvelle conversation */}
       <motion.div
