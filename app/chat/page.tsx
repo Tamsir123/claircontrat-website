@@ -5,7 +5,19 @@ import { Send, Upload, FileText, MessageCircle, AlertCircle, Brain, Trash2, Copy
 import axios from "axios"
 import { MessageFormatter } from "@/lib/message-formatter"
 import MessageRenderer from "@/components/message-renderer"
+import FileUpload from "@/components/file-upload"
+import MessageWithFiles from "@/components/message-with-files"
 import "./modern-chat-styles.css"
+import "./file-upload-styles.css"
+
+interface FileData {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  content: string;
+  preview?: string;
+}
 
 export default function ChatPage() {
   const [message, setMessage] = useState("")
@@ -18,12 +30,15 @@ export default function ChatPage() {
   const [isClient, setIsClient] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [windowSize, setWindowSize] = useState({ width: 1200, height: 800 })
+  const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([])
+  const [showFileUpload, setShowFileUpload] = useState(false)
   const [messages, setMessages] = useState<Array<{
     type: string;
     content: string;
     timestamp: string;
     indicator?: string;
     analysisType?: string;
+    files?: FileData[];
   }>>([
     {
       type: "ai",
@@ -239,6 +254,40 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
     }
   }
 
+  // Fonctions de gestion des fichiers
+  const handleFileSelect = (fileData: FileData) => {
+    setUploadedFiles(prev => [...prev, fileData]);
+  };
+
+  const handleRemoveFile = (fileId: string) => {
+    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+  };
+
+  const toggleFileUpload = () => {
+    setShowFileUpload(!showFileUpload);
+  };
+
+  // Fonction pour extraire le texte des fichiers
+  const extractTextFromFiles = (files: FileData[]): string => {
+    return files.map(file => {
+      if (file.type === 'text/plain') {
+        // Pour les fichiers texte, décoder le base64
+        try {
+          const base64Content = file.content.split(',')[1];
+          return `[Fichier: ${file.name}]\n${atob(base64Content)}\n`;
+        } catch (e) {
+          return `[Fichier: ${file.name}] - Erreur de lecture\n`;
+        }
+      } else if (file.type === 'application/pdf') {
+        return `[Document PDF: ${file.name}] - Contenu analysé par l'IA\n`;
+      } else if (file.type.startsWith('image/')) {
+        return `[Image: ${file.name}] - Image jointe\n`;
+      } else {
+        return `[Document: ${file.name}] - Fichier joint\n`;
+      }
+    }).join('\n');
+  };
+
   // Fonction ULTRA-INTELLIGENTE pour déterminer quel endpoint utiliser
   const detectMessageType = (message: string) => {
     const lowerMessage = message.toLowerCase()
@@ -321,28 +370,40 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
 
   // Fonction principale pour le chat intelligent
   const handleSendMessage = async () => {
-    if (!message.trim()) return
+    if (!message.trim() && uploadedFiles.length === 0) return
     
     const currentMessage = message
+    const currentFiles = [...uploadedFiles]
     setMessage("")
+    setUploadedFiles([])
+    setShowFileUpload(false)
     setIsLoading(true)
+    
+    // Préparer le contenu du message avec les fichiers
+    let messageContent = currentMessage;
+    if (currentFiles.length > 0) {
+      const filesText = extractTextFromFiles(currentFiles);
+      messageContent = currentMessage + (currentMessage ? '\n\n' : '') + filesText;
+    }
     
     // Ajouter le message utilisateur
     const newUserMessage = {
       type: "user",
       content: currentMessage,
       timestamp: new Date().toLocaleTimeString(),
+      files: currentFiles
     }
     
     setMessages(prev => [...prev, newUserMessage])
 
     try {
       // Détecter le type de message et utiliser l'endpoint approprié
-      const messageType = detectMessageType(currentMessage)
+      const messageType = detectMessageType(messageContent)
       console.log('🎯 Type de message détecté:', messageType)
-      console.log('📝 Message:', currentMessage.substring(0, 100) + '...')
+      console.log('📝 Message:', messageContent.substring(0, 100) + '...')
       console.log('📋 Contrat existant:', !!contractText)
       console.log('👤 Profil utilisateur:', userPreference || 'Aucun')
+      console.log('📎 Fichiers joints:', currentFiles.length)
       
       let response
       let aiResponse = ""
@@ -351,10 +412,10 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
         case 'contract_analysis':
           console.log('📋 Résumé de contrat → Utilisation du SUMMARY')
           response = await axios.post('https://contract-backend-1riz.onrender.com/contract/summary', {
-            contractText: currentMessage
+            contractText: messageContent
           })
           aiResponse = response.data.summary
-          setContractText(currentMessage)
+          setContractText(messageContent)
           break
 
         case 'risk_alert':
@@ -379,7 +440,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
           }))
           
           response = await axios.post('https://contract-backend-1riz.onrender.com/ai/chat', {
-            message: currentMessage,
+            message: messageContent,
             conversationHistory: chatHistoryForQuestion,
             contractContext: contractText || null,
             userProfile: userPreference || null,
@@ -398,7 +459,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
           }))
 
           response = await axios.post('https://contract-backend-1riz.onrender.com/ai/chat', {
-            message: currentMessage,
+            message: messageContent,
             conversationHistory: conversationHistory,
             contractContext: contractText || null,
             userProfile: userPreference || null
@@ -455,6 +516,8 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
       },
     ])
     setContractText("")
+    setUploadedFiles([])
+    setShowFileUpload(false)
   }
 
   // Fonction automatique pour générer une alerte dès qu'une préférence est sélectionnée
@@ -1284,17 +1347,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                             >
                               {/* Contenu du message */}
                               <div className="text-sm leading-relaxed">
-                                {msg.type === "ai" ? (
-                                  <MessageRenderer 
-                                    content={msg.content} 
-                                    messageType={msg.analysisType}
-                                  />
-                                ) : (
-                                  <MessageRenderer 
-                                    content={msg.content} 
-                                    messageType="user"
-                                  />
-                                )}
+                                <MessageWithFiles message={msg} />
                               </div>
                               
                               {/* Timestamp et actions */}
@@ -1392,11 +1445,15 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                       <div className="relative">
                         {/* Container principal de l'input - Style ChatGPT exact */}
                         <div className="relative bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-3xl shadow-sm focus-within:border-slate-400 dark:focus-within:border-slate-500 transition-colors">
-                          {/* Bouton Plus à gauche */}
+                          {/* Bouton Plus à gauche - Remplacé par FileUpload */}
                           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
-                            <button className="w-8 h-8 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
-                              <Plus className="w-5 h-5" />
-                            </button>
+                            <FileUpload
+                              onFileSelect={handleFileSelect}
+                              onRemoveFile={handleRemoveFile}
+                              uploadedFiles={uploadedFiles}
+                              isOpen={showFileUpload}
+                              onToggle={toggleFileUpload}
+                            />
                           </div>
 
                           <textarea
@@ -1405,7 +1462,7 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                             onChange={(e) => setMessage(e.target.value)}
                             onPaste={handlePaste}
                             onKeyPress={(e) => {
-                              if (e.key === "Enter" && !e.shiftKey && !isLoading) {
+                              if (e.key === "Enter" && !e.shiftKey && !isLoading && (message.trim() || uploadedFiles.length > 0)) {
                                 e.preventDefault()
                                 handleSendMessage()
                               }
@@ -1445,14 +1502,14 @@ ${content.substring(0, 500)}${content.length > 500 ? '...' : ''}
                             {/* Bouton d'envoi style ChatGPT */}
                             <motion.button
                               onClick={handleSendMessage}
-                              disabled={!message.trim() || isLoading}
+                              disabled={(!message.trim() && uploadedFiles.length === 0) || isLoading}
                               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                                message.trim() && !isLoading
+                                (message.trim() || uploadedFiles.length > 0) && !isLoading
                                   ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100'
                                   : 'bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed'
                               }`}
-                              whileHover={message.trim() && !isLoading ? { scale: 1.05 } : {}}
-                              whileTap={message.trim() && !isLoading ? { scale: 0.95 } : {}}
+                              whileHover={(message.trim() || uploadedFiles.length > 0) && !isLoading ? { scale: 1.05 } : {}}
+                              whileTap={(message.trim() || uploadedFiles.length > 0) && !isLoading ? { scale: 0.95 } : {}}
                             >
                               {isLoading ? (
                                 <motion.div
